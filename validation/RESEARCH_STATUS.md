@@ -57,3 +57,15 @@ This establishes a second information-loss boundary: coarse decisions can obscur
 ## Next scientific milestone
 
 Quantify model-recovery calibration across repeated seeds and observation regimes, then make the evidence sequence latent at the same time as internal belief. The key next question is whether update model, corruption channel, and decision/report parameters remain jointly identifiable rather than only conditionally identifiable when received evidence is supplied.
+
+
+## v0.3.1 repeated-seed recovery pilot
+
+A prospectively frozen 100-seed model-recovery calibration has been specified. A
+20-seed computational pilot, using the first frozen seeds without changing the grid or
+measurement model, shows near-perfect recovery from noisy reported probabilities but
+substantial degradation from binary actions alone. For the true PCC generator,
+action-only top-1 recovery was 13/20, with five leaky-Bayes and two anchored-Bayes
+confusions. Reports and joint reports+actions recovered PCC in 20/20 pilot seeds.
+
+The full 100-seed frozen run remains pending and should be treated as confirmatory.

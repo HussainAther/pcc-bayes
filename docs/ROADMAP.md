@@ -44,7 +44,7 @@ Next:
 - richer action tasks with varying payoffs
 - allow received evidence and internal belief to be latent simultaneously
 - compare against additional genuinely distinct update families
-- repeated-seed calibration of model probabilities and recovery rates
+- repeated-seed calibration of model probabilities and recovery rates (20-seed pilot complete; 100-seed frozen confirmation pending)
 
 ## Phase 4 — EBID tests
 
