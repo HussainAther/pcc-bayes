@@ -119,3 +119,12 @@
 - Prospectively validated affordance-transition dynamics over all 480,000 frozen v0.9 posterior updates.
 - Verified the Markov prediction gap-contraction identity and exact 1/2/3-action transition matrices.
 - Showed dynamically that the obs=0.55, switch=0.30 regime routes mass into two-action bands without entering the three-action region.
+
+## 0.12.0
+
+- derived exact observation-specific affine preimages of the one-, two-, and three-action affordance regions;
+- added direct prior+observation affordance classification without posterior normalization;
+- added 216 explicit transition-surface equations across the frozen environment grid;
+- prospectively validated the surfaces over 480,000 updates with zero class mismatches;
+- matched all frozen v0.11 affordance transition matrices exactly;
+- added `affordance_preimage.py`, experiment 21, tests, and frozen validation artifacts.

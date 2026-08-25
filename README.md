@@ -168,3 +168,13 @@ The prospective v0.10 test checked all 480,000 posterior states from the frozen 
 ### v0.11: affordance-transition dynamics
 
 The three-state Bayesian filter can now be treated explicitly as a map on the posterior simplex. For symmetric state switching with probability `s`, the prediction step contracts every pairwise posterior gap by `1 - 3s/2`; the subsequent observation update reweights the predictive belief by the observation likelihood and renormalizes. A prospectively frozen validation over 480,000 updates reproduced the existing filter to numerical precision, with zero affordance-class mismatches and exact 1/2/3-action transition matrices. This turns the v0.9/v0.10 affordance result from static occupancy geometry into a dynamical transport statement.
+
+## v0.12: observation-specific affordance preimages
+
+For the frozen three-state utility-topset model, posterior affordance boundaries can be pulled back exactly through the Bayesian update. If `r_i` denotes the unnormalized posterior score and `Z=sum(r)`, each posterior boundary `p'_i-p'_j=0.15` is equivalent to the affine prior-simplex line
+
+```text
+r_i - r_j - 0.15 Z = 0.
+```
+
+The v0.12 prospective validation tested 480,000 updates across the frozen environment grid and found zero preimage-class mismatches. See `validation/V0_12_PREIMAGE_SURFACES_RESULT.md` and `results/21_observation_preimage_surfaces.csv`.

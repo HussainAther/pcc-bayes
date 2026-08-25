@@ -145,3 +145,9 @@ The one/two/three-action decision regions of the frozen utility-topset policy ar
 ## v0.11 completed: affordance-transition dynamics
 
 The one-step three-state Bayesian map and the frozen utility-topset affordance geometry now jointly predict exact transitions among 1-, 2-, and 3-action regions. Next: derive observation-specific preimages of each affordance region so transition probabilities can be characterized from prior-belief geometry before simulation.
+
+## v0.12 completed: observation-specific transition preimages
+
+The one-step preimages of the frozen one-, two-, and three-action affordance regions are now explicit affine partitions of the prior probability simplex for each observation. All frozen validation gates passed across 480,000 updates.
+
+Next: use these preimage regions together with the observation probabilities to derive **conditional transition probabilities** between affordance classes from a prior belief, rather than only deterministic destinations conditional on a realized observation. This would turn the geometric transition surfaces into a stochastic affordance-transition kernel.

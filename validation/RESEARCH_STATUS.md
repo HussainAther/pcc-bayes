@@ -138,3 +138,7 @@ Next: derive and prospectively test the posterior/utility conditions that distin
 ## v0.11 affordance-transition dynamics
 
 PASS. Across the full frozen v0.9 grid (480,000 updates), an independently coded analytical simplex map reproduced posterior coordinates to max error 5.551e-16, produced zero affordance-class mismatches, matched every 3x3 affordance transition matrix exactly, and recovered frozen occupancy fractions. The prediction operator contracts pairwise posterior gaps by `1 - 3s/2`; observation updates then repolarize belief. The obs=0.55/switch=0.30 cell showed 11,368 1->2 transitions but no entry into the 3-action region, explaining the earlier two-way-only ambiguity dynamically.
+
+## v0.12 observation-specific affordance preimages
+
+**PASS.** The posterior affordance boundaries from v0.10 were analytically pulled back through the v0.11 Bayesian update into affine lines on the prior simplex, separately for each possible observation. Across 480,000 frozen updates, direct preimage classification produced zero affordance mismatches, every 3x3 transition matrix matched the frozen v0.11 result exactly, and the maximum affine boundary residual was 4.441e-16. The result converts one-step affordance transitions from a forward simulation statement into an exact observation-conditioned partition of prior belief space.
