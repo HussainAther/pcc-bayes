@@ -59,7 +59,9 @@ Let `phi = (P, C, Ch)` parameterize an update process. Given an observed belief 
 
 `p(phi | B) ∝ p(B | phi) p(phi)`.
 
-The baseline repo uses simulation distance and normalized pseudo-posterior weights. This is approximate Bayesian computation in spirit, not an exact cognitive likelihood. A future version should support explicit state-space observation models and proper likelihood-based inference.
+The v0.1 baseline used simulation distance and normalized pseudo-posterior weights. Version 0.2 adds an explicit binary observation channel and a likelihood-based grid posterior. When received evidence is hidden, the binary observation is marginalized analytically at each transition. The model still remains synthetic and conditional on the specified update family; it is not a calibrated cognitive model.
+
+A key v0.2 result is an identifiability ceiling near simplex boundaries: once beliefs saturate, additional belief observations can carry little information about the hidden corruption process. See `OBSERVATION_MODEL.md`.
 
 ## 6. Core distinction
 

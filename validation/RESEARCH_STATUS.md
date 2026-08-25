@@ -12,6 +12,10 @@ Date: 2026-08-25
 - local Fisher/KL geometry check
 - conditional inverse inference for Pressure/Control
 - latent-channel simulation-matching baseline for `(P,C,Ch)`
+- explicit hidden observation-channel likelihood
+- analytic marginalization of latent received binary evidence
+- discrete likelihood-based posterior over `(P,C,Ch)`
+- sequence-length identifiability diagnostics
 - automated unit tests
 
 ## Current synthetic evidence
@@ -28,7 +32,9 @@ For a Bernoulli reference probability of `0.5`, the Fisher quadratic approximati
 
 Conditional on the realized observations, Pressure and Control can be replayed and compared directly. Chaos is not identifiable from that deterministic replay because it parameterizes how latent/raw observations become observed evidence.
 
-When all three are inferred only by stochastic trajectory matching, the current baseline can favor a zero-chaos model even when data were generated with nonzero chaos. This is a useful negative result: a proper generative observation model or additional observed variables are required before interpreting weights over Chaos as posterior beliefs.
+Version 0.2 supplies the missing generative observation model. In a 120-step synthetic run, exact belief transitions recover Pressure=1.5 and Control=1.2, while Chaos posterior concentration depends strongly on observation access. With raw and received evidence both observed, effective posterior support is about 2.83 grid points; with beliefs only it is about 6.20.
+
+Across 20 seeds, increasing sequence length from 20 to 160 reduces mean effective Chaos-grid support from about 4.85 to 2.28 when raw and received evidence are available. Beliefs-only support remains near 6.69 after saturation. This establishes an information ceiling in the current binary setup: longer belief trajectories need not make the corruption channel identifiable.
 
 ## Not yet established
 
@@ -40,4 +46,4 @@ When all three are inferred only by stochastic trajectory matching, the current 
 
 ## Next scientific milestone
 
-Implement an explicit hidden-observation state-space model where raw evidence, corrupted evidence, and reported beliefs are separately represented. Compare PCC-Bayes against standard Bayes, leaky Bayes, recency weighting, and anchoring using likelihood-based model comparison.
+Add a reported-belief/action observation layer and likelihood-based model comparison among standard Bayes, leaky Bayes, recency weighting, anchoring, and PCC-tempered updates. The key next question is whether model class and update parameters remain distinguishable when internal beliefs are not directly observed.

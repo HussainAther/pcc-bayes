@@ -11,6 +11,15 @@
 
 ## Phase 2 — Better inference models
 
+Completed in v0.2 baseline:
+
+- explicit raw -> corrupted -> belief observation channel
+- likelihood-based discrete posterior over Pressure, Control, and Chaos
+- analytic marginalization of latent binary received observations
+- observation-access and sequence-length identifiability experiments
+
+Next:
+
 - categorical and continuous hypotheses
 - Beta-Bernoulli and Dirichlet-multinomial conjugate models
 - explicit source reliability

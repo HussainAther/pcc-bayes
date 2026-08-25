@@ -50,7 +50,9 @@ pcc-bayes/
 │   ├── bayes.py             # ordinary + tempered Bayesian updates
 │   ├── belief_state.py      # entropy / KL / JS utilities
 │   ├── geometry.py          # local Fisher/KL geometry
-│   ├── meta_inference.py    # inverse inference over update parameters
+│   ├── latent_inference.py  # likelihood-based hidden-channel inference
+│   ├── meta_inference.py    # simulation-matching baselines
+│   ├── observation_channel.py # explicit evidence-corruption model
 │   ├── observables.py       # EBID-style trajectory observables
 │   ├── pcc.py               # PCC parameterization + noise operator
 │   └── simulation.py        # sequential binary belief model
@@ -60,7 +62,10 @@ pcc-bayes/
 │   ├── 03_world_switch.py
 │   ├── 04_same_endpoint_different_paths.py
 │   ├── 05_information_geometry.py
-│   └── 06_infer_update_rule.py
+│   ├── 06_infer_update_rule.py
+│   ├── 07_latent_chaos_identifiability.py
+│   ├── 08_latent_observation_channel.py
+│   └── 09_identifiability_by_sequence_length.py
 ├── docs/
 │   ├── THEORY.md
 │   ├── HYPOTHESES.md
@@ -92,6 +97,9 @@ python experiments/03_world_switch.py
 python experiments/04_same_endpoint_different_paths.py
 python experiments/05_information_geometry.py
 python experiments/06_infer_update_rule.py
+python experiments/07_latent_chaos_identifiability.py
+python experiments/08_latent_observation_channel.py
+python experiments/09_identifiability_by_sequence_length.py
 ```
 
 Outputs are written to `results/`.
@@ -103,6 +111,7 @@ Outputs are written to `results/`.
 3. **Path dependence** — construct trajectories with similar endpoints but different revision volatility.
 4. **Information geometry** — test the local quadratic KL approximation and the predicted doubled growth exponent in controlled perturbation experiments.
 5. **Meta-inference** — infer latent PCC update parameters from observed belief trajectories.
+6. **Observation-channel identifiability** — separate raw evidence, corrupted evidence, and beliefs and quantify which PCC parameters remain recoverable as variables are hidden.
 
 ## Relationship to PCC / EBID
 
@@ -112,4 +121,4 @@ The connection is a hypothesis to test, not an assumed equivalence.
 
 ## Status
 
-Early research code. APIs and theory are expected to evolve as experiments falsify, refine, or replace the initial PCC-to-belief mapping.
+Version 0.2 adds a likelihood-based hidden observation channel and explicit identifiability experiments. The main current boundary result is that beliefs-only inference can hit an information ceiling for Chaos after binary posteriors saturate. APIs and theory remain research-grade and are expected to evolve.
