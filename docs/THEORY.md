@@ -16,6 +16,12 @@ where `P` is evidence pressure and `C` is belief control. Observation chaos is i
 
 This parameterization is intentionally minimal. It provides knobs that can be swept and inferred without claiming that these knobs uniquely represent cognition.
 
+For a binary belief, the update has a particularly transparent log-odds form:
+
+`logit(b_{t+1}) = C logit(b_t) + P log(L_1/L_0)`.
+
+Thus `C=1` gives ordinary accumulation of past log evidence, `C<1` gives exponential forgetting of accumulated log-odds, and `C>1` amplifies existing conviction. A conventional leaky-Bayes recursion is therefore nested inside PCC as the `P=1` slice, rather than constituting an independent model family.
+
 ## 2. Interpretation of the parameters
 
 ### Pressure
@@ -72,3 +78,11 @@ PCC-Bayes separates three levels:
 3. **Meta-inference**: inference about the rule that generated those trajectories.
 
 The research value lies mainly in levels 2 and 3.
+
+## 7. Latent reports, actions, and model comparison
+
+Version 0.3 treats internal belief as latent at the measurement stage. Given a common received-evidence sequence, each candidate update rule generates its own latent belief trajectory. Observable data are then generated from that trajectory through either noisy probability reports, a stochastic binary action policy, or both.
+
+Reported probabilities use additive Gaussian noise in binary log-odds space. Actions use a soft log-odds policy. Model comparison integrates likelihood over a supplied discrete parameter grid with a uniform within-model prior. This grid-averaged evidence prevents a flexible model from being judged only by its single best-fitting parameter point.
+
+The first synthetic result shows a measurement-channel boundary: noisy reports can distinguish a non-Bayesian PCC generator cleanly in the tested setup, whereas binary actions alone discard enough information to leave PCC and leaky Bayes substantially confounded.

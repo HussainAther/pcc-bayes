@@ -52,9 +52,12 @@ pcc-bayes/
 │   ├── geometry.py          # local Fisher/KL geometry
 │   ├── latent_inference.py  # likelihood-based hidden-channel inference
 │   ├── meta_inference.py    # simulation-matching baselines
+│   ├── model_comparison.py  # latent-rule model evidence
 │   ├── observation_channel.py # explicit evidence-corruption model
 │   ├── observables.py       # EBID-style trajectory observables
+│   ├── reporting.py         # noisy reports + binary action models
 │   ├── pcc.py               # PCC parameterization + noise operator
+│   ├── update_models.py     # Bayes/leaky/anchored/PCC candidates
 │   └── simulation.py        # sequential binary belief model
 ├── experiments/
 │   ├── 01_coin_learning.py
@@ -65,7 +68,8 @@ pcc-bayes/
 │   ├── 06_infer_update_rule.py
 │   ├── 07_latent_chaos_identifiability.py
 │   ├── 08_latent_observation_channel.py
-│   └── 09_identifiability_by_sequence_length.py
+│   ├── 09_identifiability_by_sequence_length.py
+│   └── 10_report_action_model_comparison.py
 ├── docs/
 │   ├── THEORY.md
 │   ├── HYPOTHESES.md
@@ -100,6 +104,7 @@ python experiments/06_infer_update_rule.py
 python experiments/07_latent_chaos_identifiability.py
 python experiments/08_latent_observation_channel.py
 python experiments/09_identifiability_by_sequence_length.py
+python experiments/10_report_action_model_comparison.py
 ```
 
 Outputs are written to `results/`.
@@ -112,6 +117,7 @@ Outputs are written to `results/`.
 4. **Information geometry** — test the local quadratic KL approximation and the predicted doubled growth exponent in controlled perturbation experiments.
 5. **Meta-inference** — infer latent PCC update parameters from observed belief trajectories.
 6. **Observation-channel identifiability** — separate raw evidence, corrupted evidence, and beliefs and quantify which PCC parameters remain recoverable as variables are hidden.
+7. **Latent-belief model comparison** — compare candidate update rules using only noisy probability reports and/or actions rather than direct access to internal beliefs.
 
 ## Relationship to PCC / EBID
 
@@ -121,4 +127,4 @@ The connection is a hypothesis to test, not an assumed equivalence.
 
 ## Status
 
-Version 0.2 adds a likelihood-based hidden observation channel and explicit identifiability experiments. The main current boundary result is that beliefs-only inference can hit an information ceiling for Chaos after binary posteriors saturate. APIs and theory remain research-grade and are expected to evolve.
+Version 0.3 adds a latent-belief observation layer and likelihood-based model comparison among Bayes, leaky Bayes, anchored Bayes, and PCC-tempered updates. In the frozen synthetic baseline, noisy probability reports recover the PCC generator cleanly while binary actions alone leave substantial ambiguity with leaky Bayes. The v0.2 Chaos-saturation ceiling remains an important earlier boundary result. APIs and theory remain research-grade and are expected to evolve.

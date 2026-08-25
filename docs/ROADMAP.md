@@ -29,10 +29,22 @@ Next:
 
 ## Phase 3 — Agents and reported beliefs
 
-- infer latent beliefs from actions
-- noisy reported probabilities
-- inverse decision models
-- model comparison among Bayes, leaky Bayes, recency weighting, anchoring, and PCC-tempered updates
+Completed in v0.3 baseline:
+
+- noisy reported probabilities in log-odds space
+- binary soft-decision action observation model
+- latent-belief replay under Bayes, leaky Bayes, anchored Bayes, and PCC-tempered updates
+- grid-averaged model evidence with within-model complexity penalty
+- explicit documentation that leaky Bayes is the `Pressure=1` slice of PCC
+- report-only, action-only, and joint model-identifiability experiment
+
+Next:
+
+- jointly infer decision-policy parameters rather than fixing them
+- richer action tasks with varying payoffs
+- allow received evidence and internal belief to be latent simultaneously
+- compare against additional genuinely distinct update families
+- repeated-seed calibration of model probabilities and recovery rates
 
 ## Phase 4 — EBID tests
 

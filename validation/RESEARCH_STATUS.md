@@ -16,6 +16,10 @@ Date: 2026-08-25
 - analytic marginalization of latent received binary evidence
 - discrete likelihood-based posterior over `(P,C,Ch)`
 - sequence-length identifiability diagnostics
+- latent reported-belief likelihood in log-odds space
+- stochastic binary action observation model
+- model evidence over Bayes, leaky Bayes, anchored Bayes, and PCC update families
+- explicit leaky-Bayes/PCC nesting test
 - automated unit tests
 
 ## Current synthetic evidence
@@ -36,6 +40,12 @@ Version 0.2 supplies the missing generative observation model. In a 120-step syn
 
 Across 20 seeds, increasing sequence length from 20 to 160 reduces mean effective Chaos-grid support from about 4.85 to 2.28 when raw and received evidence are available. Beliefs-only support remains near 6.69 after saturation. This establishes an information ceiling in the current binary setup: longer belief trajectories need not make the corruption channel identifiable.
 
+### Latent report/action model comparison
+
+Version 0.3 adds a latent-belief measurement layer. In the frozen 80-step PCC-generated synthetic run (`P=1.5`, `C=0.6`), noisy probability reports recover PCC decisively and select the exact generating grid point. Binary actions alone are much less informative: PCC receives model probability about 0.56 and leaky Bayes about 0.40. Combining reports and actions again recovers the generating PCC model and grid point.
+
+This establishes a second information-loss boundary: coarse decisions can obscure distinctions that remain visible in probabilistic reports. Leaky Bayes is also formally recognized as the `P=1` slice of PCC in binary log-odds space.
+
 ## Not yet established
 
 - a universal PCC structure for Bayesian inference
@@ -46,4 +56,4 @@ Across 20 seeds, increasing sequence length from 20 to 160 reduces mean effectiv
 
 ## Next scientific milestone
 
-Add a reported-belief/action observation layer and likelihood-based model comparison among standard Bayes, leaky Bayes, recency weighting, anchoring, and PCC-tempered updates. The key next question is whether model class and update parameters remain distinguishable when internal beliefs are not directly observed.
+Quantify model-recovery calibration across repeated seeds and observation regimes, then make the evidence sequence latent at the same time as internal belief. The key next question is whether update model, corruption channel, and decision/report parameters remain jointly identifiable rather than only conditionally identifiable when received evidence is supplied.
