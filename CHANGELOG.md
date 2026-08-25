@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.0 - 2026-08-25
+
+- prospectively mapped three-action viable-set affordance over a 12-cell observation-reliability x state-persistence grid while holding both v0.8 Chaos policies fixed
+- added an exploiter-free affordance summary for branch prevalence, three-way prevalence, support size, entropy, and reward
+- prespecified a low-information/high-volatility anchor before inspection
+- found 57--60% branch prevalence and 22--26% genuine three-way prevalence at the anchor, versus ~11--13% and ~2.3% in v0.8
+- both fixed policies passed anchor value, nonrandom-adequacy, and matched opportunity-conditioned exploitability gates; reductions were 35.69 and 15.21 percentage points
+- retained an overall frozen failure because higher state switching increased branch frequency but did not monotonically increase three-way branch prevalence at fixed observation accuracy
+- added Experiment 18, frozen affordance-map result documentation, caching of shared environment/belief paths, and regression tests
+
 ## 0.8.0 - 2026-08-25
 
 - prospectively transferred opportunity-conditioned Chaos from binary decisions to a three-state, three-action Bayesian tracking task

@@ -119,3 +119,21 @@ Next:
 - prospectively vary environmental information structure (observation quality, transition persistence, or payoff geometry) as blocked conditions while keeping the v0.8 policy definitions fixed;
 - test the antecedent hypothesis that mature multi-option Chaos requires sufficient viable-set affordance before asking about exploitability;
 - only after that, consider continuous or larger action spaces.
+
+
+## Phase 7 — Environmental affordance mapping
+
+v0.9 completed as a retained partial failure:
+
+- held the two v0.8 multi-action Chaos policies fixed;
+- prospectively varied observation reliability and state-switch probability over a 12-cell grid;
+- demonstrated that low observation reliability can turn a rare-branch environment into one with frequent two- and three-option branch sets;
+- both candidates passed all local Chaos gates at the prespecified low-information/high-volatility anchor;
+- retained failure of the frozen monotonic-volatility prediction: more state switching increased branch frequency without necessarily increasing three-way branch cardinality.
+
+Next:
+
+- treat environmental affordance as an interaction surface rather than a scalar uncertainty axis;
+- prospectively test whether branch **cardinality** can be predicted from posterior/utility geometry before simulation;
+- distinguish two-option ambiguity from genuine multi-option ambiguity analytically;
+- do not choose a new passing environment cell post hoc.

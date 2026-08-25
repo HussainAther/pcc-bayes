@@ -121,3 +121,12 @@ This supports a local/conditional interpretation within the present substrate: C
 - no policy widening, perturbation increase, environment weakening, or gate relaxation is counted as v0.8 evidence.
 
 Next: treat viable-set prevalence as an environmental affordance question rather than tuning v0.8 after failure. A new prospective experiment should manipulate information geometry or transition structure *as an independent condition* and ask when genuine multi-option branch sets emerge while keeping the v0.8 policies fixed.
+
+
+## v0.9.0 completed: information-structure affordance map
+
+The v0.9 experiment held both v0.8 three-action Chaos policies fixed and varied only observation accuracy (`0.45, 0.55, 0.65, 0.80`) and state-switch probability (`0.03, 0.10, 0.30`) over a prospectively frozen 12-cell grid. Lower observation reliability strongly expanded the live option set. At the prespecified `(0.45, 0.30)` anchor, branch opportunities were `0.5727` and `0.5982`, with genuine three-way opportunities `0.2642` and `0.2235` for utility-topset and perturbed-utility Chaos respectively. Both policies passed all anchor value and matched local-exploitability gates; matched exploitability reductions were `0.3569` and `0.1521`.
+
+The full v0.9 freeze nevertheless failed because one directional prediction failed for both architectures. At observation accuracy `0.55`, increasing state switching from `0.03` to `0.30` increased overall branch prevalence but did not increase genuine three-way prevalence. This constrains the affordance hypothesis: transition volatility and observation uncertainty cannot be collapsed into one scalar uncertainty quantity, and greater branch frequency need not imply greater branch cardinality. See `validation/V0_9_AFFORDANCE_MAP_RESULT.md`.
+
+Next: derive and prospectively test the posterior/utility conditions that distinguish two-option from three-option branch affordance, rather than searching the environment grid for favorable cells.

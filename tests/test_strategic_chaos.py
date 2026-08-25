@@ -183,3 +183,23 @@ def test_online_softmax_exploiter_learns_current_observation_mapping():
     episode = {"observations": observations, "actions": actions}
     exploiter = OnlineSoftmaxExploiter(calibration_passes=5).fit([episode])
     assert exploiter.prequential_accuracy([episode]) > 0.95
+
+
+def test_three_action_affordance_summary_is_deterministic_and_bounded():
+    from pcc_bayes.multiclass_chaos import ThreeStateTrackingConfig, summarize_three_action_affordance
+
+    config = ThreeStateTrackingConfig(steps=60, switch_probability=0.30, observation_accuracy=0.45)
+    a = summarize_three_action_affordance("utility_topset_chaos", config, range(3))
+    b = summarize_three_action_affordance("utility_topset_chaos", config, range(3))
+    assert a == b
+    assert 0.0 <= a["branch_opportunity_fraction"] <= 1.0
+    assert 0.0 <= a["three_way_opportunity_fraction"] <= a["branch_opportunity_fraction"]
+    assert 1.0 <= a["mean_support_size"] <= 3.0
+
+
+def test_three_action_affordance_summary_rejects_nonchaos_policy():
+    import pytest
+    from pcc_bayes.multiclass_chaos import ThreeStateTrackingConfig, summarize_three_action_affordance
+
+    with pytest.raises(ValueError):
+        summarize_three_action_affordance("deterministic_value", ThreeStateTrackingConfig(steps=20), [1])

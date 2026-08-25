@@ -16,4 +16,4 @@ __all__ = [
     "compare_update_models", "simulate_reported_beliefs", "simulate_actions",
 ]
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"

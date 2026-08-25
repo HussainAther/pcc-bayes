@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 import math
 
 import numpy as np
@@ -121,17 +122,27 @@ def perturbed_utility_chaos_probabilities(belief) -> np.ndarray:
     return counts / float(len(winners))
 
 
-def simulate_three_action_policy_episode(
-    policy: str,
-    config: ThreeStateTrackingConfig,
-    seed: int,
-):
+@lru_cache(maxsize=None)
+def _cached_three_state_environment(config: ThreeStateTrackingConfig, seed: int):
+    """Cache the environment/belief path shared by all policies for one frozen cell."""
     states, observations = generate_three_state_episode(config, seed)
     beliefs = filter_three_state_markov(
         observations,
         switch_probability=config.switch_probability,
         observation_accuracy=config.observation_accuracy,
     )
+    states.setflags(write=False)
+    observations.setflags(write=False)
+    beliefs.setflags(write=False)
+    return states, observations, beliefs
+
+
+def simulate_three_action_policy_episode(
+    policy: str,
+    config: ThreeStateTrackingConfig,
+    seed: int,
+):
+    states, observations, beliefs = _cached_three_state_environment(config, int(seed))
     offsets = {
         "deterministic_value": 80_001,
         "uniform_random": 80_002,
@@ -340,3 +351,27 @@ def evaluate_three_action_transfer(candidate, config, calibration_seeds, evaluat
         "episodes": len(candidate_eval),
     }
 
+
+
+def summarize_three_action_affordance(policy, config, evaluation_seeds):
+    """Summarize fixed-policy branch affordances without fitting an exploiter."""
+    if policy not in {"utility_topset_chaos", "perturbed_utility_chaos"}:
+        raise ValueError("policy must be a frozen three-action Chaos policy")
+    episodes = [
+        simulate_three_action_policy_episode(policy, config, int(seed))
+        for seed in evaluation_seeds
+    ]
+    branch = [ep["support_sizes"] >= 2 for ep in episodes]
+    three = [ep["support_sizes"] == 3 for ep in episodes]
+    return {
+        "candidate_policy": policy,
+        "observation_accuracy": float(config.observation_accuracy),
+        "switch_probability": float(config.switch_probability),
+        "branch_opportunity_fraction": float(np.mean([np.mean(mask) for mask in branch])),
+        "three_way_opportunity_fraction": float(np.mean([np.mean(mask) for mask in three])),
+        "mean_support_size": float(np.mean([np.mean(ep["support_sizes"]) for ep in episodes])),
+        "policy_entropy": float(np.mean([ep["policy_entropy"] for ep in episodes])),
+        "mean_reward": float(np.mean([ep["mean_reward"] for ep in episodes])),
+        "mean_accuracy": float(np.mean([ep["accuracy"] for ep in episodes])),
+        "episodes": len(episodes),
+    }
