@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0 - Asymmetric value and logistic-exploiter falsification
+
+- prospectively froze asymmetric decision payoffs that shift the Bayes-optimal action threshold to 2/3
+- added value-aware structured and stochastic-threshold Chaos policies centered on utility indifference
+- added a distinct online logistic exploiter model class with fixed public-context features and prequential SGD updates
+- both Chaos candidates preserved asymmetric reward and outperformed uniform random play
+- both failed the frozen >=0.05 global logistic-exploitability reduction gate, achieving reductions of 0.0270 and 0.0326
+- mixing-opportunity prediction accuracy fell much further (0.6312 and 0.6612), identifying a conditional/local effect without retroactively passing the global gate
+- added Experiment 15, a frozen result document, and regression tests
+
 ## 0.5.0 - Adaptive exploiter and independent Chaos replication
 
 - prospectively froze an online adaptive-exploiter replication before confirmatory evaluation

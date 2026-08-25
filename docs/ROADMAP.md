@@ -79,3 +79,11 @@ No human-domain interpretation should precede a clear observation model and appr
 - added an independently specified stochastic-threshold Chaos architecture
 - both candidates passed frozen unpredictability, adequacy, value-preservation, and adaptive-exploitability gates
 - next: vary exploiter model class and environmental payoff/asymmetry before claiming broader portability
+
+## v0.6.0 completed: asymmetric-value / logistic falsification
+
+- introduced a fixed asymmetric payoff matrix and utility-optimal posterior threshold of 2/3
+- replaced the count-table opponent with a distinct online logistic exploiter
+- both Chaos candidates preserved utility but failed the frozen 5-point global exploitability-reduction gate
+- the exploitability reduction was concentrated on the 25--29% of decisions where mixing was strategically live
+- next: prospectively separate **global exploitability** from **opportunity-conditioned exploitability**, and test whether the latter replicates across payoff matrices without retuning policy coefficients

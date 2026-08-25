@@ -79,3 +79,36 @@ def test_adaptive_exploiter_updates_online():
     exploiter = AdaptiveContextExploiter(observation_order=1, action_order=0).fit([])
     acc = exploiter.prequential_accuracy([episode])
     assert acc > 0.9
+
+
+def test_asymmetric_payoff_threshold_is_two_thirds():
+    from pcc_bayes.strategic_chaos import AsymmetricPayoffs
+    payoffs = AsymmetricPayoffs()
+    assert np.isclose(payoffs.indifference_threshold, 2.0 / 3.0)
+
+
+def test_utility_policy_uses_asymmetric_threshold():
+    from pcc_bayes.strategic_chaos import predictable_utility_prob
+    assert predictable_utility_prob(0.60) == 0.0
+    assert predictable_utility_prob(0.70) == 1.0
+
+
+def test_utility_structured_chaos_mixes_at_value_indifference():
+    from pcc_bayes.strategic_chaos import utility_structured_chaos_prob
+    p = 2.0 / 3.0
+    assert np.isclose(utility_structured_chaos_prob(p), 0.55)
+    assert utility_structured_chaos_prob(0.20) == 0.0
+
+
+def test_online_logistic_exploiter_learns_simple_mapping():
+    from pcc_bayes.strategic_chaos import OnlineLogisticExploiter
+    observations = np.tile([0, 1], 60)
+    actions = observations.copy()
+    episode = {
+        "observations": observations,
+        "actions": actions,
+        "action_probabilities": actions.astype(float),
+    }
+    exploiter = OnlineLogisticExploiter(calibration_passes=5).fit([episode])
+    acc = exploiter.prequential_accuracy([episode])
+    assert acc > 0.95

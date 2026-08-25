@@ -365,3 +365,276 @@ def evaluate_adaptive_exploitability(policy: str, config: TrackingConfig, calibr
         ])),
         "episodes": len(evaluation),
     }
+
+
+@dataclass(frozen=True)
+class AsymmetricPayoffs:
+    reward_state0_action0: float = 1.0
+    reward_state0_action1: float = -2.0
+    reward_state1_action0: float = -0.5
+    reward_state1_action1: float = 1.0
+
+    def expected_rewards(self, p1: float):
+        p1 = float(p1)
+        p0 = 1.0 - p1
+        u0 = p0 * self.reward_state0_action0 + p1 * self.reward_state1_action0
+        u1 = p0 * self.reward_state0_action1 + p1 * self.reward_state1_action1
+        return float(u0), float(u1)
+
+    @property
+    def indifference_threshold(self) -> float:
+        # Solve U(action 0) = U(action 1) for p=P(state=1).
+        a0 = self.reward_state0_action0
+        b0 = self.reward_state1_action0 - self.reward_state0_action0
+        a1 = self.reward_state0_action1
+        b1 = self.reward_state1_action1 - self.reward_state0_action1
+        den = b1 - b0
+        if den == 0:
+            raise ValueError("payoff matrix has no unique posterior indifference threshold")
+        threshold = (a0 - a1) / den
+        if not 0.0 <= threshold <= 1.0:
+            raise ValueError("payoff indifference lies outside [0, 1]")
+        return float(threshold)
+
+    def realized_reward(self, state: int, action: int) -> float:
+        if state == 0 and action == 0:
+            return float(self.reward_state0_action0)
+        if state == 0 and action == 1:
+            return float(self.reward_state0_action1)
+        if state == 1 and action == 0:
+            return float(self.reward_state1_action0)
+        if state == 1 and action == 1:
+            return float(self.reward_state1_action1)
+        raise ValueError("state and action must be binary")
+
+
+def predictable_utility_prob(p1: float, payoffs: AsymmetricPayoffs | None = None) -> float:
+    payoffs = payoffs or AsymmetricPayoffs()
+    return 1.0 if float(p1) >= payoffs.indifference_threshold else 0.0
+
+
+def utility_structured_chaos_prob(
+    p1: float,
+    payoffs: AsymmetricPayoffs | None = None,
+    mixing_width: float = 0.18,
+    max_non_greedy: float = 0.45,
+) -> float:
+    """Value-aware mixing around the payoff indifference point."""
+    if mixing_width <= 0:
+        raise ValueError("mixing_width must be positive")
+    if not 0.0 <= max_non_greedy <= 0.5:
+        raise ValueError("max_non_greedy must lie in [0, 0.5]")
+    payoffs = payoffs or AsymmetricPayoffs()
+    threshold = payoffs.indifference_threshold
+    distance = abs(float(p1) - threshold)
+    non_greedy = max_non_greedy * max(0.0, 1.0 - distance / mixing_width)
+    greedy_action1 = predictable_utility_prob(p1, payoffs) == 1.0
+    return float(1.0 - non_greedy if greedy_action1 else non_greedy)
+
+
+def utility_threshold_chaos_prob(
+    p1: float,
+    payoffs: AsymmetricPayoffs | None = None,
+    half_width: float = 0.20,
+) -> float:
+    """Marginal action-1 probability from a sampled utility decision threshold."""
+    if half_width <= 0:
+        raise ValueError("half_width must be positive")
+    payoffs = payoffs or AsymmetricPayoffs()
+    center = payoffs.indifference_threshold
+    low = center - half_width
+    high = center + half_width
+    if low < 0.0 or high > 1.0:
+        raise ValueError("threshold interval must remain inside [0, 1]")
+    return float(np.clip((float(p1) - low) / (high - low), 0.0, 1.0))
+
+
+def simulate_asymmetric_policy_episode(
+    policy: str,
+    config: TrackingConfig,
+    seed: int,
+    payoffs: AsymmetricPayoffs | None = None,
+):
+    payoffs = payoffs or AsymmetricPayoffs()
+    states, observations = generate_tracking_episode(config, seed)
+    beliefs = filter_binary_markov(
+        observations, config.switch_probability, config.observation_accuracy
+    )
+    offsets = {
+        "predictable_utility": 30_001,
+        "uniform_random": 30_002,
+        "utility_structured_chaos": 30_003,
+        "utility_threshold_chaos": 30_004,
+    }
+    if policy not in offsets:
+        raise ValueError(f"unknown asymmetric policy: {policy}")
+    rng = np.random.default_rng(seed + offsets[policy])
+
+    if policy == "predictable_utility":
+        probs = np.asarray([predictable_utility_prob(p, payoffs) for p in beliefs], dtype=float)
+        actions = probs.astype(int)
+    elif policy == "uniform_random":
+        probs = np.full(config.steps, 0.5, dtype=float)
+        actions = (rng.random(config.steps) < probs).astype(int)
+    elif policy == "utility_structured_chaos":
+        probs = np.asarray([utility_structured_chaos_prob(p, payoffs) for p in beliefs], dtype=float)
+        actions = (rng.random(config.steps) < probs).astype(int)
+    else:
+        probs = np.asarray([utility_threshold_chaos_prob(p, payoffs) for p in beliefs], dtype=float)
+        center = payoffs.indifference_threshold
+        thresholds = rng.uniform(center - 0.20, center + 0.20, size=config.steps)
+        actions = (beliefs >= thresholds).astype(int)
+
+    rewards = np.asarray(
+        [payoffs.realized_reward(int(s), int(a)) for s, a in zip(states, actions)],
+        dtype=float,
+    )
+    return {
+        "states": states,
+        "observations": observations,
+        "beliefs": beliefs,
+        "action_probabilities": probs,
+        "actions": actions,
+        "rewards": rewards,
+        "mean_reward": float(np.mean(rewards)),
+        "accuracy": float(np.mean(actions == states)),
+        "policy_entropy": float(np.mean([binary_entropy(p) for p in probs])),
+    }
+
+
+class OnlineLogisticExploiter:
+    """Online logistic action predictor over public context features."""
+
+    def __init__(self, learning_rate=0.05, l2=0.001, calibration_passes=5):
+        if learning_rate <= 0:
+            raise ValueError("learning_rate must be positive")
+        if l2 < 0:
+            raise ValueError("l2 must be nonnegative")
+        if calibration_passes < 1:
+            raise ValueError("calibration_passes must be positive")
+        self.learning_rate = float(learning_rate)
+        self.l2 = float(l2)
+        self.calibration_passes = int(calibration_passes)
+        self.weights = np.zeros(7, dtype=float)
+
+    @staticmethod
+    def _sigmoid(z: float) -> float:
+        if z >= 0:
+            return float(1.0 / (1.0 + math.exp(-z)))
+        ez = math.exp(z)
+        return float(ez / (1.0 + ez))
+
+    def _features(self, observations, actions, t):
+        observations = np.asarray(observations, dtype=int)
+        actions = np.asarray(actions, dtype=int)
+        if t < 2:
+            return None
+        cur_obs = float(observations[t])
+        prev_obs = float(observations[t - 1])
+        prev_action = float(actions[t - 1])
+        prev2_action = float(actions[t - 2])
+        return np.asarray(
+            [
+                1.0,
+                cur_obs,
+                prev_obs,
+                prev_action,
+                prev2_action,
+                cur_obs * prev_action,
+                prev_obs * prev_action,
+            ],
+            dtype=float,
+        )
+
+    def predict_probability(self, observations, actions, t) -> float:
+        x = self._features(observations, actions, t)
+        if x is None:
+            return 0.5
+        return self._sigmoid(float(np.dot(self.weights, x)))
+
+    def predict_at(self, observations, actions, t) -> int:
+        return int(self.predict_probability(observations, actions, t) >= 0.5)
+
+    def update_at(self, observations, actions, t):
+        x = self._features(observations, actions, t)
+        if x is None:
+            return
+        y = float(np.asarray(actions, dtype=int)[t])
+        p = self._sigmoid(float(np.dot(self.weights, x)))
+        grad = (p - y) * x + self.l2 * self.weights
+        self.weights -= self.learning_rate * grad
+
+    def fit(self, episodes):
+        self.weights = np.zeros(7, dtype=float)
+        for _ in range(self.calibration_passes):
+            for episode in episodes:
+                observations = np.asarray(episode["observations"], dtype=int)
+                actions = np.asarray(episode["actions"], dtype=int)
+                for t in range(len(actions)):
+                    self.update_at(observations, actions, t)
+        return self
+
+    def prequential_accuracy(self, episodes, mask_fn=None) -> float:
+        correct = 0
+        total = 0
+        for episode in episodes:
+            observations = np.asarray(episode["observations"], dtype=int)
+            actions = np.asarray(episode["actions"], dtype=int)
+            for t in range(len(actions)):
+                if self._features(observations, actions, t) is None:
+                    continue
+                use = mask_fn is None or mask_fn(episode, t)
+                if use:
+                    pred = self.predict_at(observations, actions, t)
+                    correct += int(pred == actions[t])
+                    total += 1
+                self.update_at(observations, actions, t)
+        return float(correct / total) if total else float("nan")
+
+
+def evaluate_asymmetric_logistic_exploitability(
+    policy: str,
+    config: TrackingConfig,
+    calibration_seeds,
+    evaluation_seeds,
+    payoffs: AsymmetricPayoffs | None = None,
+):
+    payoffs = payoffs or AsymmetricPayoffs()
+    calibration = [
+        simulate_asymmetric_policy_episode(policy, config, int(seed), payoffs)
+        for seed in calibration_seeds
+    ]
+    evaluation = [
+        simulate_asymmetric_policy_episode(policy, config, int(seed), payoffs)
+        for seed in evaluation_seeds
+    ]
+
+    exploiter = OnlineLogisticExploiter(
+        learning_rate=0.05, l2=0.001, calibration_passes=5
+    ).fit(calibration)
+
+    def mixing_opportunity(episode, t):
+        p = float(episode["action_probabilities"][t])
+        return 0.0 < p < 1.0
+
+    exploit_accuracy = exploiter.prequential_accuracy(evaluation)
+    subset_exploiter = OnlineLogisticExploiter(
+        learning_rate=0.05, l2=0.001, calibration_passes=5
+    ).fit(calibration)
+    mixing_accuracy = subset_exploiter.prequential_accuracy(
+        evaluation, mask_fn=mixing_opportunity
+    )
+
+    return {
+        "policy": policy,
+        "mean_reward": float(np.mean([ep["mean_reward"] for ep in evaluation])),
+        "mean_accuracy": float(np.mean([ep["accuracy"] for ep in evaluation])),
+        "mean_policy_entropy": float(np.mean([ep["policy_entropy"] for ep in evaluation])),
+        "logistic_exploiter_accuracy": exploit_accuracy,
+        "mixing_opportunity_logistic_accuracy": mixing_accuracy,
+        "mixing_opportunity_fraction": float(np.mean([
+            np.mean((ep["action_probabilities"] > 0.0) & (ep["action_probabilities"] < 1.0))
+            for ep in evaluation
+        ])),
+        "episodes": len(evaluation),
+    }

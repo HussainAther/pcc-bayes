@@ -67,6 +67,15 @@ A prospectively frozen replication tested the unchanged structured-Chaos policy 
 
 Both candidates passed all four frozen gates: increased policy entropy, adequacy relative to uniform random play, value preservation relative to deterministic play, and at least a 0.05 reduction in adaptive exploiter accuracy. On mixing opportunities, adaptive prediction accuracy was about 0.765 for both architectures. This supports implementation replication of the narrow context-conditioned Chaos claim within the current Bayesian tracking substrate. It does not yet establish robustness to different exploiter model classes or payoff structures. See `validation/V0_5_ADAPTIVE_CHAOS_REPLICATION_RESULT.md`.
 
+
+## Asymmetric-value and logistic-exploiter falsification (v0.6.0)
+
+A prospectively frozen test simultaneously changed strategic value geometry and the exploiter model class. False positives were assigned reward -2.0 while misses received -0.5, shifting the Bayes-optimal action-1 threshold from 0.5 to 2/3. Two Chaos architectures were re-expressed around this utility-indifference point without fitting to confirmatory outcomes. Exploitability was measured by an online logistic predictor with fixed public-context features and prequential SGD updates.
+
+Both candidates preserved asymmetric reward: deterministic utility play achieved mean reward 0.5978, utility structured Chaos 0.5836, utility threshold Chaos 0.5803, and uniform random play -0.1187. Both candidates therefore passed unpredictability, adequacy-vs-random, and value-preservation gates. However, the frozen global exploitability gate failed for both. Logistic prediction accuracy fell from 0.9328 on deterministic play to 0.9058 and 0.9002, reductions of only 0.0270 and 0.0326 versus the required 0.05.
+
+The failure is retained. A prespecified diagnostic shows the effect is concentrated where mixing is active: exploiter accuracy on mixing opportunities was 0.6312 and 0.6612, covering about 25% and 29% of decisions. This motivates a future prospective distinction between global policy unpredictability and local conditional exploitability over strategically viable alternatives. See `validation/V0_6_ASYMMETRIC_LOGISTIC_RESULT.md`.
+
 ## Not yet established
 
 - a universal PCC structure for Bayesian inference
@@ -77,7 +86,7 @@ Both candidates passed all four frozen gates: increased policy entropy, adequacy
 
 ## Next scientific milestone
 
-For the mature-Chaos branch, test robustness to a genuinely different exploiter model class and to asymmetric or state-dependent decision payoffs, without retuning the two passing policies. In parallel, the inference branch still has a frozen 100-seed model-recovery confirmation pending. The broader question is whether the current conditional-exploitability result survives changes to both the observer and the strategic value landscape.
+For the mature-Chaos branch, prospectively distinguish **global exploitability** from **opportunity-conditioned exploitability** and test the conditional claim across multiple frozen payoff matrices and opponent model classes without retuning policy coefficients. The v0.6 global logistic gate remains failed. In parallel, the inference branch still has a frozen 100-seed model-recovery confirmation pending.
 
 
 ## v0.3.1 repeated-seed recovery pilot

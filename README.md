@@ -5,6 +5,10 @@
 PCC-Bayes extends the PCC / EBID research program from dynamical state variables to **belief distributions**. The central object is not only what an agent believes, but how its posterior distribution moves through probability space under evidence, inertia, and imperfect observations. The current scalar parameters are Bayes-domain proxies; they are not asserted to be complete operational definitions of the mature PCC constructs.
 
 
+## v0.6 asymmetric-value falsification
+
+A prospectively frozen test changed both the value geometry and the opponent model class. False-positive actions were assigned a larger cost, shifting the Bayes-optimal action threshold to `p=2/3`, and exploitability was measured with an online logistic predictor rather than the earlier count-table opponent. Both value-aware Chaos architectures preserved asymmetric reward and remained substantially better than uniform random play, but both **failed** the frozen requirement of a 0.05 global reduction in exploiter accuracy. The reductions were 0.0270 and 0.0326. On the subset of decisions where each policy actually mixed, exploiter accuracy fell to 0.6312 and 0.6612, suggesting a concentrated conditional effect rather than global unpredictability. The failed global gate is retained unchanged. See `validation/V0_6_ASYMMETRIC_LOGISTIC_FREEZE.md` and `validation/V0_6_ASYMMETRIC_LOGISTIC_RESULT.md`.
+
 ## Mature PCC Chaos replication (v0.5.0)
 
 The repository now contains a prospectively frozen replication of the mature PCC Chaos anti-definition: **unpredictability + strategic adequacy + resistance to exploitation**, rather than observation noise. Two independently specified value-aware stochastic policies both preserved most decision accuracy and reduced the accuracy of a context-aware exploiter that updated online after every revealed action. The original v0.4 history-only exploitability failure remains preserved as a negative result; v0.5 strengthens only the narrower context-conditioned claim. See `validation/V0_5_ADAPTIVE_CHAOS_REPLICATION_FREEZE.md` and `validation/V0_5_ADAPTIVE_CHAOS_REPLICATION_RESULT.md`.
