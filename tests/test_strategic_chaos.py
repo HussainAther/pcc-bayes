@@ -141,3 +141,45 @@ def test_matched_opportunity_evaluation_uses_candidate_mask():
     assert 0.0 < row["opportunity_fraction"] < 1.0
     assert 0.0 <= row["candidate_opportunity_logistic_accuracy"] <= 1.0
     assert 0.0 <= row["baseline_opportunity_logistic_accuracy"] <= 1.0
+
+
+def test_three_state_filter_rows_sum_to_one():
+    from pcc_bayes.multiclass_chaos import filter_three_state_markov
+    beliefs = filter_three_state_markov([0, 1, 2, 2, 1])
+    assert beliefs.shape == (5, 3)
+    assert np.allclose(np.sum(beliefs, axis=1), 1.0)
+
+
+def test_topset_chaos_can_keep_three_actions_live():
+    from pcc_bayes.multiclass_chaos import utility_topset_chaos_probabilities
+    probs = utility_topset_chaos_probabilities(np.array([0.36, 0.34, 0.30]))
+    assert np.count_nonzero(probs > 0.0) == 3
+    assert np.isclose(np.sum(probs), 1.0)
+    assert np.isclose(np.max(probs), 0.60)
+
+
+def test_perturbed_utility_marginal_is_reproducible():
+    from pcc_bayes.multiclass_chaos import perturbed_utility_chaos_probabilities
+    belief = np.array([0.38, 0.34, 0.28])
+    a = perturbed_utility_chaos_probabilities(belief)
+    b = perturbed_utility_chaos_probabilities(belief)
+    assert np.array_equal(a, b)
+    assert np.isclose(np.sum(a), 1.0)
+
+
+def test_three_action_episode_reproducible():
+    from pcc_bayes.multiclass_chaos import ThreeStateTrackingConfig, simulate_three_action_policy_episode
+    config = ThreeStateTrackingConfig(steps=80)
+    a = simulate_three_action_policy_episode("utility_topset_chaos", config, 12)
+    b = simulate_three_action_policy_episode("utility_topset_chaos", config, 12)
+    assert np.array_equal(a["states"], b["states"])
+    assert np.array_equal(a["actions"], b["actions"])
+
+
+def test_online_softmax_exploiter_learns_current_observation_mapping():
+    from pcc_bayes.multiclass_chaos import OnlineSoftmaxExploiter
+    observations = np.tile([0, 1, 2], 80)
+    actions = observations.copy()
+    episode = {"observations": observations, "actions": actions}
+    exploiter = OnlineSoftmaxExploiter(calibration_passes=5).fit([episode])
+    assert exploiter.prequential_accuracy([episode]) > 0.95

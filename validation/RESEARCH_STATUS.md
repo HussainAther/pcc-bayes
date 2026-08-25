@@ -107,3 +107,17 @@ Following the retained v0.6 global exploitability failure, v0.7 prospectively de
 Three frozen payoff geometries shifted utility indifference across posterior thresholds 1/3, 1/2, and 2/3. Both structured Chaos and threshold Chaos passed all four gates in all six candidate/payoff cells. Opportunity-conditioned exploiter-accuracy reductions relative to matched deterministic play ranged from 0.1035 to 0.1777 while candidate rewards remained within 0.03 of deterministic reward. Opportunity fractions ranged from about 0.229 to 0.295.
 
 This supports a local/conditional interpretation within the present substrate: Chaos-like resistance is concentrated at strategic branch points where multiple actions remain live, rather than requiring globally unpredictable behavior. The v0.6 global gate remains failed and is not reclassified. See `validation/V0_7_OPPORTUNITY_CONDITIONED_RESULT.md`.
+
+
+## v0.8.0 completed: three-action transfer falsification
+
+- added a three-state hidden Markov tracking environment and correct categorical Bayesian filter;
+- added a three-action utility-topset Chaos policy and an independently structured perturbed-utility policy;
+- added an online adaptive three-class softmax exploiter;
+- prospectively required nontrivial branch prevalence and genuine three-way branch points;
+- both candidates preserved value and strongly beat uniform random play;
+- the frozen transfer criterion failed because branch opportunities (11.4--12.5%) and three-way opportunities (~2.3%) were too rare;
+- utility-topset Chaos passed the local exploitability gate with a 20.35-point reduction, while perturbed-utility Chaos achieved only 5.28 points and failed that gate;
+- no policy widening, perturbation increase, environment weakening, or gate relaxation is counted as v0.8 evidence.
+
+Next: treat viable-set prevalence as an environmental affordance question rather than tuning v0.8 after failure. A new prospective experiment should manipulate information geometry or transition structure *as an independent condition* and ask when genuine multi-option branch sets emerge while keeping the v0.8 policies fixed.

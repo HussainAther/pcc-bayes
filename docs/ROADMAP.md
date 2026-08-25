@@ -99,3 +99,23 @@ Completed in v0.7.0:
 - retained the earlier v0.6 global failure unchanged.
 
 Next: keep the v0.7 opportunity definition fixed and attempt falsification under a new opponent model class and/or altered environment dynamics before making any broader cross-domain claim.
+
+
+## Phase 6 — Multi-option Chaos transfer
+
+v0.8 completed as a retained negative result:
+
+- three-state / three-action Bayesian tracking substrate;
+- categorical filtering and normalized ternary policy entropy;
+- two independent multi-action Chaos architectures;
+- online multiclass softmax exploiter;
+- explicit branch-opportunity and three-way-opportunity masks;
+- full frozen transfer gate failed because the environment rarely sustained multi-action viable sets;
+- exploitability resistance was architecture-dependent.
+
+Next:
+
+- do **not** retune v0.8 policies post hoc;
+- prospectively vary environmental information structure (observation quality, transition persistence, or payoff geometry) as blocked conditions while keeping the v0.8 policy definitions fixed;
+- test the antecedent hypothesis that mature multi-option Chaos requires sufficient viable-set affordance before asking about exploitability;
+- only after that, consider continuous or larger action spaces.

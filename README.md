@@ -5,6 +5,10 @@
 PCC-Bayes extends the PCC / EBID research program from dynamical state variables to **belief distributions**. The central object is not only what an agent believes, but how its posterior distribution moves through probability space under evidence, inertia, and imperfect observations. The current scalar parameters are Bayes-domain proxies; they are not asserted to be complete operational definitions of the mature PCC constructs.
 
 
+## v0.8 three-action transfer falsification
+
+v0.8 prospectively transferred the v0.7 opportunity-conditioned Chaos hypothesis to a three-state, three-action Bayesian tracking task and replaced the binary logistic opponent with an online three-class softmax exploiter. Both candidate policies preserved value, but the full frozen transfer criterion **failed**. Branch opportunities occurred on only 11.4--12.5% of steps and genuine three-way opportunities on about 2.3%, below the frozen prevalence gates. Utility-topset Chaos still reduced matched branch-point exploiter accuracy by 20.35 percentage points, whereas perturbed-utility Chaos reduced it by only 5.28 points and failed the exploitability gate. The result constrains the theory: adding actions is not sufficient; a multi-option Chaos claim requires an environment that actually sustains multiple viable alternatives. See `validation/V0_8_THREE_ACTION_FREEZE.md` and `validation/V0_8_THREE_ACTION_RESULT.md`.
+
 ## v0.6 asymmetric-value falsification
 
 A prospectively frozen test changed both the value geometry and the opponent model class. False-positive actions were assigned a larger cost, shifting the Bayes-optimal action threshold to `p=2/3`, and exploitability was measured with an online logistic predictor rather than the earlier count-table opponent. Both value-aware Chaos architectures preserved asymmetric reward and remained substantially better than uniform random play, but both **failed** the frozen requirement of a 0.05 global reduction in exploiter accuracy. The reductions were 0.0270 and 0.0326. On the subset of decisions where each policy actually mixed, exploiter accuracy fell to 0.6312 and 0.6612, suggesting a concentrated conditional effect rather than global unpredictability. The failed global gate is retained unchanged. See `validation/V0_6_ASYMMETRIC_LOGISTIC_FREEZE.md` and `validation/V0_6_ASYMMETRIC_LOGISTIC_RESULT.md`.
@@ -69,7 +73,8 @@ pcc-bayes/
 │   ├── reporting.py         # noisy reports + binary action models
 │   ├── pcc.py               # Bayes-domain proxy parameters + compatibility alias
 │   ├── update_models.py     # Bayes/leaky/anchored/PCC candidates
-│   ├── strategic_chaos.py   # value-aware mixing + adaptive exploiters
+│   ├── strategic_chaos.py   # binary value-aware mixing + adaptive exploiters
+│   ├── multiclass_chaos.py  # three-state/action transfer + softmax exploiter
 │   └── simulation.py        # sequential binary belief model
 ├── experiments/
 │   ├── 01_coin_learning.py
@@ -117,6 +122,7 @@ python experiments/07_latent_chaos_identifiability.py
 python experiments/08_latent_observation_channel.py
 python experiments/09_identifiability_by_sequence_length.py
 python experiments/10_report_action_model_comparison.py
+python experiments/17_three_action_transfer.py
 ```
 
 Outputs are written to `results/`.
@@ -144,3 +150,7 @@ Version 0.3 adds a latent-belief observation layer and likelihood-based model co
 ### v0.7 opportunity-conditioned Chaos result
 
 After the retained v0.6 failure of a global logistic exploitability gate, v0.7 prospectively tests the narrower branch-point hypothesis without retuning either Chaos policy. Across three payoff geometries (utility-indifference thresholds 1/3, 1/2, and 2/3), both independent Chaos architectures preserve value and reduce online logistic prediction accuracy by at least 10 percentage points relative to deterministic utility play on the **same candidate-defined opportunity contexts**. All six frozen candidate/payoff cells pass. See `validation/V0_7_OPPORTUNITY_CONDITIONED_FREEZE.md` and `validation/V0_7_OPPORTUNITY_CONDITIONED_RESULT.md`.
+
+### v0.8 three-action transfer result
+
+The frozen v0.8 transfer test failed. Both candidates remained strongly value-preserving, but neither generated the prospectively required prevalence of branch or three-way opportunities. The utility-topset architecture showed a strong local exploitability reduction when branching did occur; the perturbed-utility architecture did not clear the exploitability gate. The negative result is retained without post-hoc policy or environment tuning.

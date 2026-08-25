@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.8.0 - 2026-08-25
+
+- prospectively transferred opportunity-conditioned Chaos from binary decisions to a three-state, three-action Bayesian tracking task
+- added a correct categorical Markov filter, normalized ternary policy entropy, and two independent three-action Chaos architectures
+- added an online adaptive three-class softmax exploiter with public observation/action context
+- froze explicit branch-prevalence and genuine three-way-opportunity gates before confirmatory inspection
+- retained a negative result: branch opportunities occurred on only 11.4--12.5% of steps and three-way opportunities on about 2.3%, below the frozen gates
+- utility-topset Chaos preserved value and reduced matched branch-point exploiter accuracy by 20.35 points, but still failed the full transfer criterion because branching was too rare
+- perturbed-utility Chaos preserved value but reduced matched branch-point exploitability by only 5.28 points, below the frozen 10-point gate
+- added Experiment 17, frozen result documentation, and multiclass regression tests
+
 ## 0.6.0 - Asymmetric value and logistic-exploiter falsification
 
 - prospectively froze asymmetric decision payoffs that shift the Bayes-optimal action threshold to 2/3
