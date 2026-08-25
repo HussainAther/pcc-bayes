@@ -164,3 +164,7 @@ The frozen v0.8 transfer test failed. Both candidates remained strongly value-pr
 For the frozen three-action utility-topset policy, viable-set cardinality now has an exact posterior-simplex characterization. With `u_i = 2 p_i - 1` and utility gap `0.30`, define `delta = 0.15` and sort posterior coordinates as `p_(1) >= p_(2) >= p_(3)`. One action is live when `p_(1)-p_(2) > delta`; two are live when the top two are within `delta` but the third is not; all three are live when `p_(1)-p_(3) <= delta`.
 
 The prospective v0.10 test checked all 480,000 posterior states from the frozen v0.9 grid and found zero analytical/implementation mismatches. This converts the observed affordance map into an exact decision-geometry partition while leaving posterior-region occupancy as a separate filtering-dynamics problem.
+
+### v0.11: affordance-transition dynamics
+
+The three-state Bayesian filter can now be treated explicitly as a map on the posterior simplex. For symmetric state switching with probability `s`, the prediction step contracts every pairwise posterior gap by `1 - 3s/2`; the subsequent observation update reweights the predictive belief by the observation likelihood and renormalizes. A prospectively frozen validation over 480,000 updates reproduced the existing filter to numerical precision, with zero affordance-class mismatches and exact 1/2/3-action transition matrices. This turns the v0.9/v0.10 affordance result from static occupancy geometry into a dynamical transport statement.

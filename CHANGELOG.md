@@ -112,3 +112,10 @@
 - Tested unchanged structured- and threshold-Chaos policies across symmetric, false-positive-costly, and false-negative-costly payoff geometries.
 - Both architectures passed all frozen opportunity prevalence, unpredictability, value-preservation, and >=0.10 opportunity-conditioned exploitability-resistance gates in all three payoff geometries.
 - Retained the v0.6 global logistic exploitability failure; v0.7 supports a narrower local/conditional claim rather than retroactively changing the earlier criterion.
+
+## 0.11.0 - 2026-08-25
+
+- Added exact three-state simplex prediction and observation update maps.
+- Prospectively validated affordance-transition dynamics over all 480,000 frozen v0.9 posterior updates.
+- Verified the Markov prediction gap-contraction identity and exact 1/2/3-action transition matrices.
+- Showed dynamically that the obs=0.55, switch=0.30 regime routes mass into two-action bands without entering the three-action region.

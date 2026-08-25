@@ -141,3 +141,7 @@ Next:
 ## v0.10 complete: analytical affordance geometry
 
 The one/two/three-action decision regions of the frozen utility-topset policy are now analytically characterized and prospectively validated. Next: derive/test how the Markov transition and observation update transport posterior mass across these fixed simplex regions.
+
+## v0.11 completed: affordance-transition dynamics
+
+The one-step three-state Bayesian map and the frozen utility-topset affordance geometry now jointly predict exact transitions among 1-, 2-, and 3-action regions. Next: derive observation-specific preimages of each affordance region so transition probabilities can be characterized from prior-belief geometry before simulation.

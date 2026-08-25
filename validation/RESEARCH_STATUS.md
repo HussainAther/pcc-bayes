@@ -134,3 +134,7 @@ Next: derive and prospectively test the posterior/utility conditions that distin
 ## v0.10 - Analytical affordance geometry
 
 **Status: PASS.** The fixed utility-topset policy admits exact simplex boundaries for one-, two-, and three-action viable sets. The prospective comparison covered 480,000 posterior states across the frozen v0.9 grid and produced zero support-cardinality mismatches; all historical v0.9 branch and three-way fractions were recovered exactly. The v0.9 volatility result is now geometrically localized: at observation accuracy 0.55 and switch probability 0.30, 30.39% of posterior states occupy the two-action bands while 0% occupy the central three-action region. The next open problem is posterior-mass transport through these fixed regions, not further tuning of the decision boundary.
+
+## v0.11 affordance-transition dynamics
+
+PASS. Across the full frozen v0.9 grid (480,000 updates), an independently coded analytical simplex map reproduced posterior coordinates to max error 5.551e-16, produced zero affordance-class mismatches, matched every 3x3 affordance transition matrix exactly, and recovered frozen occupancy fractions. The prediction operator contracts pairwise posterior gaps by `1 - 3s/2`; observation updates then repolarize belief. The obs=0.55/switch=0.30 cell showed 11,368 1->2 transitions but no entry into the 3-action region, explaining the earlier two-way-only ambiguity dynamically.
