@@ -99,3 +99,11 @@ action-only top-1 recovery was 13/20, with five leaky-Bayes and two anchored-Bay
 confusions. Reports and joint reports+actions recovered PCC in 20/20 pilot seeds.
 
 The full 100-seed frozen run remains pending and should be treated as confirmatory.
+
+## Opportunity-conditioned exploitability robustness (v0.7.0)
+
+Following the retained v0.6 global exploitability failure, v0.7 prospectively defined a narrower primary endpoint: online logistic predictability on candidate-defined strategic opportunities, with deterministic utility play scored on the exact same underlying public contexts. The two existing Chaos policies were not retuned.
+
+Three frozen payoff geometries shifted utility indifference across posterior thresholds 1/3, 1/2, and 2/3. Both structured Chaos and threshold Chaos passed all four gates in all six candidate/payoff cells. Opportunity-conditioned exploiter-accuracy reductions relative to matched deterministic play ranged from 0.1035 to 0.1777 while candidate rewards remained within 0.03 of deterministic reward. Opportunity fractions ranged from about 0.229 to 0.295.
+
+This supports a local/conditional interpretation within the present substrate: Chaos-like resistance is concentrated at strategic branch points where multiple actions remain live, rather than requiring globally unpredictable behavior. The v0.6 global gate remains failed and is not reclassified. See `validation/V0_7_OPPORTUNITY_CONDITIONED_RESULT.md`.

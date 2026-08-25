@@ -112,3 +112,32 @@ def test_online_logistic_exploiter_learns_simple_mapping():
     exploiter = OnlineLogisticExploiter(calibration_passes=5).fit([episode])
     acc = exploiter.prequential_accuracy([episode])
     assert acc > 0.95
+
+
+def test_false_negative_costly_threshold_is_one_third():
+    from pcc_bayes.strategic_chaos import AsymmetricPayoffs
+    payoffs = AsymmetricPayoffs(
+        reward_state0_action0=1.0,
+        reward_state0_action1=-0.5,
+        reward_state1_action0=-2.0,
+        reward_state1_action1=1.0,
+    )
+    assert np.isclose(payoffs.indifference_threshold, 1.0 / 3.0)
+
+
+def test_matched_opportunity_evaluation_uses_candidate_mask():
+    from pcc_bayes.strategic_chaos import (
+        AsymmetricPayoffs,
+        TrackingConfig,
+        evaluate_matched_opportunity_exploitability,
+    )
+    row = evaluate_matched_opportunity_exploitability(
+        "utility_structured_chaos",
+        TrackingConfig(steps=80),
+        calibration_seeds=range(2),
+        evaluation_seeds=range(10, 13),
+        payoffs=AsymmetricPayoffs(),
+    )
+    assert 0.0 < row["opportunity_fraction"] < 1.0
+    assert 0.0 <= row["candidate_opportunity_logistic_accuracy"] <= 1.0
+    assert 0.0 <= row["baseline_opportunity_logistic_accuracy"] <= 1.0

@@ -140,3 +140,7 @@ The connection is a hypothesis to test, not an assumed equivalence.
 ## Status
 
 Version 0.3 adds a latent-belief observation layer and likelihood-based model comparison among Bayes, leaky Bayes, anchored Bayes, and PCC-tempered updates. In the frozen synthetic baseline, noisy probability reports recover the PCC generator cleanly while binary actions alone leave substantial ambiguity with leaky Bayes. The v0.2 observation-corruption saturation ceiling remains an important earlier boundary result. APIs and theory remain research-grade and are expected to evolve.
+
+### v0.7 opportunity-conditioned Chaos result
+
+After the retained v0.6 failure of a global logistic exploitability gate, v0.7 prospectively tests the narrower branch-point hypothesis without retuning either Chaos policy. Across three payoff geometries (utility-indifference thresholds 1/3, 1/2, and 2/3), both independent Chaos architectures preserve value and reduce online logistic prediction accuracy by at least 10 percentage points relative to deterministic utility play on the **same candidate-defined opportunity contexts**. All six frozen candidate/payoff cells pass. See `validation/V0_7_OPPORTUNITY_CONDITIONED_FREEZE.md` and `validation/V0_7_OPPORTUNITY_CONDITIONED_RESULT.md`.

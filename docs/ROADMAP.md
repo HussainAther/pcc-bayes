@@ -87,3 +87,15 @@ No human-domain interpretation should precede a clear observation model and appr
 - both Chaos candidates preserved utility but failed the frozen 5-point global exploitability-reduction gate
 - the exploitability reduction was concentrated on the 25--29% of decisions where mixing was strategically live
 - next: prospectively separate **global exploitability** from **opportunity-conditioned exploitability**, and test whether the latter replicates across payoff matrices without retuning policy coefficients
+
+## Phase 5 — Opportunity-conditioned Chaos robustness
+
+Completed in v0.7.0:
+
+- prospectively separated global exploitability from opportunity-conditioned exploitability;
+- introduced matched-context scoring against deterministic utility play;
+- preserved the two existing Chaos policy architectures without coefficient retuning;
+- replicated the local conditional exploitability effect across payoff thresholds 1/3, 1/2, and 2/3;
+- retained the earlier v0.6 global failure unchanged.
+
+Next: keep the v0.7 opportunity definition fixed and attempt falsification under a new opponent model class and/or altered environment dynamics before making any broader cross-domain claim.

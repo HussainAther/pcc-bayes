@@ -638,3 +638,114 @@ def evaluate_asymmetric_logistic_exploitability(
         ])),
         "episodes": len(evaluation),
     }
+
+
+def prequential_accuracy_with_masks(exploiter, episodes, masks) -> float:
+    """Score selected steps while updating the exploiter on every revealed action."""
+    if len(episodes) != len(masks):
+        raise ValueError("episodes and masks must have the same length")
+    correct = 0
+    total = 0
+    for episode, mask in zip(episodes, masks):
+        observations = np.asarray(episode["observations"], dtype=int)
+        actions = np.asarray(episode["actions"], dtype=int)
+        mask = np.asarray(mask, dtype=bool)
+        if len(mask) != len(actions):
+            raise ValueError("each mask must match its episode length")
+        for t in range(len(actions)):
+            if exploiter._features(observations, actions, t) is None:
+                continue
+            if mask[t]:
+                pred = exploiter.predict_at(observations, actions, t)
+                correct += int(pred == actions[t])
+                total += 1
+            exploiter.update_at(observations, actions, t)
+    return float(correct / total) if total else float("nan")
+
+
+def evaluate_matched_opportunity_exploitability(
+    candidate_policy: str,
+    config: TrackingConfig,
+    calibration_seeds,
+    evaluation_seeds,
+    payoffs: AsymmetricPayoffs,
+):
+    """Compare candidate vs deterministic play on candidate-defined opportunity contexts.
+
+    The candidate determines the opportunity mask from its frozen marginal action
+    probabilities. The same mask is then applied to deterministic utility play on
+    the same environment seeds. Each policy gets its own separately calibrated
+    online logistic exploiter.
+    """
+    if candidate_policy not in {"utility_structured_chaos", "utility_threshold_chaos"}:
+        raise ValueError("candidate_policy must be a utility Chaos candidate")
+
+    candidate_calibration = [
+        simulate_asymmetric_policy_episode(candidate_policy, config, int(seed), payoffs)
+        for seed in calibration_seeds
+    ]
+    candidate_evaluation = [
+        simulate_asymmetric_policy_episode(candidate_policy, config, int(seed), payoffs)
+        for seed in evaluation_seeds
+    ]
+    baseline_calibration = [
+        simulate_asymmetric_policy_episode("predictable_utility", config, int(seed), payoffs)
+        for seed in calibration_seeds
+    ]
+    baseline_evaluation = [
+        simulate_asymmetric_policy_episode("predictable_utility", config, int(seed), payoffs)
+        for seed in evaluation_seeds
+    ]
+
+    opportunity_masks = [
+        (ep["action_probabilities"] > 0.0) & (ep["action_probabilities"] < 1.0)
+        for ep in candidate_evaluation
+    ]
+
+    candidate_global_exploiter = OnlineLogisticExploiter(
+        learning_rate=0.05, l2=0.001, calibration_passes=5
+    ).fit(candidate_calibration)
+    candidate_global_accuracy = candidate_global_exploiter.prequential_accuracy(candidate_evaluation)
+
+    baseline_global_exploiter = OnlineLogisticExploiter(
+        learning_rate=0.05, l2=0.001, calibration_passes=5
+    ).fit(baseline_calibration)
+    baseline_global_accuracy = baseline_global_exploiter.prequential_accuracy(baseline_evaluation)
+
+    candidate_subset_exploiter = OnlineLogisticExploiter(
+        learning_rate=0.05, l2=0.001, calibration_passes=5
+    ).fit(candidate_calibration)
+    candidate_opportunity_accuracy = prequential_accuracy_with_masks(
+        candidate_subset_exploiter, candidate_evaluation, opportunity_masks
+    )
+
+    baseline_subset_exploiter = OnlineLogisticExploiter(
+        learning_rate=0.05, l2=0.001, calibration_passes=5
+    ).fit(baseline_calibration)
+    baseline_opportunity_accuracy = prequential_accuracy_with_masks(
+        baseline_subset_exploiter, baseline_evaluation, opportunity_masks
+    )
+
+    opportunity_fraction = float(np.mean([np.mean(mask) for mask in opportunity_masks]))
+    candidate_reward = float(np.mean([ep["mean_reward"] for ep in candidate_evaluation]))
+    baseline_reward = float(np.mean([ep["mean_reward"] for ep in baseline_evaluation]))
+    candidate_entropy = float(np.mean([ep["policy_entropy"] for ep in candidate_evaluation]))
+    baseline_entropy = float(np.mean([ep["policy_entropy"] for ep in baseline_evaluation]))
+
+    return {
+        "candidate_policy": candidate_policy,
+        "indifference_threshold": payoffs.indifference_threshold,
+        "candidate_mean_reward": candidate_reward,
+        "baseline_mean_reward": baseline_reward,
+        "candidate_mean_accuracy": float(np.mean([ep["accuracy"] for ep in candidate_evaluation])),
+        "baseline_mean_accuracy": float(np.mean([ep["accuracy"] for ep in baseline_evaluation])),
+        "candidate_policy_entropy": candidate_entropy,
+        "baseline_policy_entropy": baseline_entropy,
+        "candidate_global_logistic_accuracy": candidate_global_accuracy,
+        "baseline_global_logistic_accuracy": baseline_global_accuracy,
+        "candidate_opportunity_logistic_accuracy": candidate_opportunity_accuracy,
+        "baseline_opportunity_logistic_accuracy": baseline_opportunity_accuracy,
+        "opportunity_exploitability_reduction": baseline_opportunity_accuracy - candidate_opportunity_accuracy,
+        "opportunity_fraction": opportunity_fraction,
+        "episodes": len(candidate_evaluation),
+    }

@@ -75,3 +75,11 @@
 - report-only, action-only, and joint observation experiment
 - documented action-only identifiability ambiguity
 - v0.3 synthetic evidence freeze
+
+## 0.7.0 - 2026-08-25
+
+- Prospectively froze opportunity-conditioned exploitability as a distinct primary endpoint after the retained v0.6 global failure.
+- Added matched-context scoring so deterministic utility play and each Chaos candidate are evaluated on the exact same candidate-defined strategic opportunity steps.
+- Tested unchanged structured- and threshold-Chaos policies across symmetric, false-positive-costly, and false-negative-costly payoff geometries.
+- Both architectures passed all frozen opportunity prevalence, unpredictability, value-preservation, and >=0.10 opportunity-conditioned exploitability-resistance gates in all three payoff geometries.
+- Retained the v0.6 global logistic exploitability failure; v0.7 supports a narrower local/conditional claim rather than retroactively changing the earlier criterion.
