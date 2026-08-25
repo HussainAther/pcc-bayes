@@ -50,6 +50,16 @@ This establishes a second information-loss boundary: coarse decisions can obscur
 
 The broader comparative PCC program now defines Pressure, Control, and Chaos as mechanistic structures rather than scalar labels. PCC-Bayes therefore freezes the following terminology: `pressure` is an evidence-gain proxy, `control` is a belief-memory proxy, and the binary flip probability is `observation_corruption`. The historical `chaos` API name remains only as a compatibility alias. Observation corruption must not be reported as PCC Chaos without a separate prospective test of unpredictability, value/adequacy, and exploitability resistance. See `docs/PCC_CONSTRUCT_MAPPING.md`.
 
+## Mature PCC Chaos in Bayesian tracking (v0.4.1)
+
+A prospectively frozen four-policy test compared deterministic value play, uniform random play, observation-corrupted deterministic play, and a structured value-aware mixing policy. Structured Chaos achieved normalized policy entropy 0.2879 and task accuracy 0.7856 versus 0.8059 for deterministic value play and 0.5013 for uniform random. It therefore passed unpredictability, adequacy-vs-random, and value-preservation gates.
+
+The original action-history-only exploitability gate failed: frozen exploiter accuracy fell only from 0.8198 to 0.7981, a 0.0217 reduction versus the preregistered 0.05 requirement. This failure is retained.
+
+A separately frozen context-aware diagnostic then exposed the current/previous public evidence plus recent actions to the exploiter, without changing the policy or seeds. Exploiter accuracy was 0.9835 on predictable-value play and 0.9002 on structured Chaos, an 0.0833 reduction that passed the frozen diagnostic gate. On the 42.63% of steps where the structured policy actually mixed, exploiter accuracy was 0.7651.
+
+The current supported interpretation is therefore conditional: Bayesian structured Chaos is not globally unpredictable, but value-aware mixing can reduce exploitability **given the same public context** while preserving most decision value. Uniform randomness remains maximally unpredictable but strategically inadequate, and observation corruption remains a noise baseline rather than PCC Chaos. See `validation/V0_4_CHAOS_RESULT.md`.
+
 ## Not yet established
 
 - a universal PCC structure for Bayesian inference

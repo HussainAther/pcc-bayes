@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1 - Mature Chaos and context-conditioned exploitability
+
+- added a switching-state Bayesian tracking environment for strategic-policy tests
+- prospectively froze and ran the first mature PCC Chaos experiment
+- separated unpredictability, strategic adequacy, and exploitability resistance
+- preserved a preregistered negative result: action-history exploitability reduction missed its gate
+- added a prospectively frozen context-aware exploiter diagnostic without retuning the policy
+- found an 8.33-point held-out reduction in context-conditioned exploitability for structured Chaos
+- retained uniform randomness and observation corruption as explicit anti-definition baselines
+- added Experiment 12/13 result tables and regression tests
+
 ## 0.3.2 - PCC construct reconciliation
 
 - separated mature cross-domain PCC constructs from Bayes-domain scalar proxies

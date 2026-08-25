@@ -64,3 +64,11 @@ Potential targets only after synthetic falsification work:
 - market expectations
 
 No human-domain interpretation should precede a clear observation model and appropriate validation.
+
+
+## v0.4.1 completed: mature Chaos probe
+
+- separated Chaos into unpredictability, adequacy, and exploitability resistance
+- retained a failed history-only exploitability gate
+- passed a prospectively frozen context-conditioned exploitation diagnostic
+- next: test whether the result survives a genuinely adversarial adaptive opponent and a second policy architecture, rather than only a frozen lookup exploiter
