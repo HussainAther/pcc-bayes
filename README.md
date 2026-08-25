@@ -158,3 +158,9 @@ After the retained v0.6 failure of a global logistic exploitability gate, v0.7 p
 ### v0.8 three-action transfer result
 
 The frozen v0.8 transfer test failed. Both candidates remained strongly value-preserving, but neither generated the prospectively required prevalence of branch or three-way opportunities. The utility-topset architecture showed a strong local exploitability reduction when branching did occur; the perturbed-utility architecture did not clear the exploitability gate. The negative result is retained without post-hoc policy or environment tuning.
+
+## v0.10 analytical affordance geometry
+
+For the frozen three-action utility-topset policy, viable-set cardinality now has an exact posterior-simplex characterization. With `u_i = 2 p_i - 1` and utility gap `0.30`, define `delta = 0.15` and sort posterior coordinates as `p_(1) >= p_(2) >= p_(3)`. One action is live when `p_(1)-p_(2) > delta`; two are live when the top two are within `delta` but the third is not; all three are live when `p_(1)-p_(3) <= delta`.
+
+The prospective v0.10 test checked all 480,000 posterior states from the frozen v0.9 grid and found zero analytical/implementation mismatches. This converts the observed affordance map into an exact decision-geometry partition while leaving posterior-region occupancy as a separate filtering-dynamics problem.

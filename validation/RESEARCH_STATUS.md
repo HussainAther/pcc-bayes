@@ -130,3 +130,7 @@ The v0.9 experiment held both v0.8 three-action Chaos policies fixed and varied 
 The full v0.9 freeze nevertheless failed because one directional prediction failed for both architectures. At observation accuracy `0.55`, increasing state switching from `0.03` to `0.30` increased overall branch prevalence but did not increase genuine three-way prevalence. This constrains the affordance hypothesis: transition volatility and observation uncertainty cannot be collapsed into one scalar uncertainty quantity, and greater branch frequency need not imply greater branch cardinality. See `validation/V0_9_AFFORDANCE_MAP_RESULT.md`.
 
 Next: derive and prospectively test the posterior/utility conditions that distinguish two-option from three-option branch affordance, rather than searching the environment grid for favorable cells.
+
+## v0.10 - Analytical affordance geometry
+
+**Status: PASS.** The fixed utility-topset policy admits exact simplex boundaries for one-, two-, and three-action viable sets. The prospective comparison covered 480,000 posterior states across the frozen v0.9 grid and produced zero support-cardinality mismatches; all historical v0.9 branch and three-way fractions were recovered exactly. The v0.9 volatility result is now geometrically localized: at observation accuracy 0.55 and switch probability 0.30, 30.39% of posterior states occupy the two-action bands while 0% occupy the central three-action region. The next open problem is posterior-mass transport through these fixed regions, not further tuning of the decision boundary.

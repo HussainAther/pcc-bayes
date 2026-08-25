@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0 - Analytical affordance geometry
+
+- Derived exact posterior-simplex boundaries for one-, two-, and three-action support under the frozen utility-topset Chaos policy.
+- Added `affordance_geometry.py` with analytical support classification and region summaries.
+- Prospectively validated the boundaries across all 480,000 posterior states in the frozen v0.9 grid with zero mismatches.
+- Reproduced every historical v0.9 branch and three-way occupancy fraction from posterior geometry alone.
+- Showed geometrically that higher volatility can move posterior mass into two-action bands without increasing occupancy of the central three-action region.
+
 ## 0.9.0 - 2026-08-25
 
 - prospectively mapped three-action viable-set affordance over a 12-cell observation-reliability x state-persistence grid while holding both v0.8 Chaos policies fixed

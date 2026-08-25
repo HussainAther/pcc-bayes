@@ -137,3 +137,7 @@ Next:
 - prospectively test whether branch **cardinality** can be predicted from posterior/utility geometry before simulation;
 - distinguish two-option ambiguity from genuine multi-option ambiguity analytically;
 - do not choose a new passing environment cell post hoc.
+
+## v0.10 complete: analytical affordance geometry
+
+The one/two/three-action decision regions of the frozen utility-topset policy are now analytically characterized and prospectively validated. Next: derive/test how the Markov transition and observation update transport posterior mass across these fixed simplex regions.
