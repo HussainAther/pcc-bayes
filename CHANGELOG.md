@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.2 - PCC construct reconciliation
+
+- separated mature cross-domain PCC constructs from Bayes-domain scalar proxies
+- renamed the canonical binary noise parameter to `observation_corruption`
+- retained `chaos` as a backwards-compatible API alias for archived experiments
+- documented that observation corruption is **not** sufficient for PCC Chaos
+- added prospective requirements for stronger Bayesian Pressure, Control, and Chaos mappings
+- added compatibility/terminology tests
+
 ## 0.1.0 — 2026-08-25
 
 - initial PCC-Bayes research package

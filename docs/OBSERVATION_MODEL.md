@@ -2,7 +2,7 @@
 
 ## Purpose
 
-PCC-Bayes v0.2 separates the evidence-generating process from the belief update. This resolves an ambiguity in the v0.1 simulation-matching baseline: Chaos belongs to the observation channel, not to the deterministic replay of already-observed evidence.
+PCC-Bayes v0.2 separates the evidence-generating process from the belief update. This resolves an ambiguity in the v0.1 simulation-matching baseline: stochastic observation corruption belongs to the observation channel, not to the deterministic replay of already-observed evidence. Earlier versions called this corruption parameter "Chaos"; v0.3.2 reserves PCC Chaos for the broader mechanistic construct.
 
 ## Generative structure
 
@@ -26,7 +26,7 @@ where
 
 The channel is
 
-`P(Y_t != X_t) = Chaos`.
+`P(Y_t != X_t) = q`, where `q` is the observation-corruption rate.
 
 The belief transition is
 
@@ -38,7 +38,7 @@ The belief transition is
 
 When `Y_t` is known, Pressure and Control determine the expected belief transition. A Gaussian measurement model in binary log-odds space turns deterministic update mismatch into a proper likelihood.
 
-If raw evidence `X_t` is also known, Chaos contributes directly through `P(Y_t|X_t, Chaos)`.
+If raw evidence `X_t` is also known, observation corruption contributes directly through `P(Y_t|X_t,q)`.
 
 If raw evidence is hidden, it is marginalized under the Bernoulli world model.
 
@@ -46,13 +46,13 @@ If raw evidence is hidden, it is marginalized under the Bernoulli world model.
 
 When only the belief trajectory is observed, each binary received observation can be marginalized analytically:
 
-`p(B_{t+1}|B_t) = sum_y p(y|H_t, Chaos) p(B_{t+1}|B_t,y,Pressure,Control)`.
+`p(B_{t+1}|B_t) = sum_y p(y|H_t,q) p(B_{t+1}|B_t,y,Pressure,Control)`.
 
 The implementation conditions each transition on the observed current belief. This avoids enumerating all `2^T` latent observation paths and yields a scalable transition likelihood.
 
 ## Important limitation: saturation
 
-Binary belief trajectories can approach the simplex boundary. Once the posterior becomes numerically extreme, opposite observations may produce nearly indistinguishable reported transitions under finite precision or measurement noise. Consequently, beliefs-only inference can reach an information ceiling: increasing sequence length does not necessarily improve identification of Chaos.
+Binary belief trajectories can approach the simplex boundary. Once the posterior becomes numerically extreme, opposite observations may produce nearly indistinguishable reported transitions under finite precision or measurement noise. Consequently, beliefs-only inference can reach an information ceiling: increasing sequence length does not necessarily improve identification of the observation-corruption rate.
 
 This is a substantive identifiability result, not only a numerical nuisance. It motivates future models with noisy reported beliefs, actions, richer hypothesis spaces, world switches, or explicit latent-state filtering.
 

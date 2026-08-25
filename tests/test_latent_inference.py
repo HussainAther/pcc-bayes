@@ -54,3 +54,16 @@ def test_posterior_marginal_normalizes():
     )
     m = posterior_marginal(rows, "chaos")
     assert abs(sum(m.values()) - 1.0) < 1e-12
+
+
+def test_canonical_corruption_grid_api_and_legacy_output_alias_agree():
+    from pcc_bayes.latent_inference import infer_latent_update_grid, posterior_marginal
+    world = BinaryWorld()
+    sim = simulate_binary_learning(steps=8, world=world, seed=2)
+    rows = infer_latent_update_grid(
+        sim["beliefs"], world,
+        pressure_grid=(1.0,), control_grid=(1.0,), corruption_grid=(0.0, 0.1),
+        observations=sim["observations"], raw_observations=sim["raw_observations"]
+    )
+    assert all(r["observation_corruption"] == r["chaos"] for r in rows)
+    assert posterior_marginal(rows, "observation_corruption") == posterior_marginal(rows, "chaos")

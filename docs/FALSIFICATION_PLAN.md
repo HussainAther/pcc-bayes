@@ -42,6 +42,6 @@ Keep experiments where:
 - entropy fails as an early-warning signal
 - high volatility does not imply poor accuracy
 - ordinary Bayes outperforms all generalized rules
-- different operational definitions of Pressure/Control/Chaos disagree
+- mature PCC definitions fail prospective mechanistic tests, or Bayes-domain proxies disagree with them
 
 Those are scientifically informative boundaries of the framework.

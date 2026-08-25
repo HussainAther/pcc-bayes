@@ -14,7 +14,7 @@
 Completed in v0.2 baseline:
 
 - explicit raw -> corrupted -> belief observation channel
-- likelihood-based discrete posterior over Pressure, Control, and Chaos
+- likelihood-based discrete posterior over evidence pressure, belief control, and observation corruption
 - analytic marginalization of latent binary received observations
 - observation-access and sequence-length identifiability experiments
 

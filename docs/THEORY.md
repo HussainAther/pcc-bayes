@@ -12,7 +12,7 @@ PCC-Bayes introduces an experimental two-exponent family:
 
 `b_{t+1}(theta) ∝ b_t(theta)^C L(x_{t+1} | theta)^P`,
 
-where `P` is evidence pressure and `C` is belief control. Observation chaos is implemented separately as corruption of the data channel.
+where `P` is evidence pressure and `C` is belief control. A separate `observation_corruption` parameter controls stochastic distortion of the data channel. These are Bayes-domain proxy parameters, not complete definitions of the mature cross-domain PCC constructs; see `PCC_CONSTRUCT_MAPPING.md`.
 
 This parameterization is intentionally minimal. It provides knobs that can be swept and inferred without claiming that these knobs uniquely represent cognition.
 
@@ -32,9 +32,9 @@ Pressure controls how strongly each observation moves the posterior. High pressu
 
 Control controls persistence of the current belief. Values above one can produce rigidity and escalating concentration; values below one weaken memory of prior concentration.
 
-### Chaos
+### Observation corruption (historically labeled "Chaos")
 
-Chaos alters the evidence channel rather than the posterior directly. In the binary baseline, observations are flipped with probability `Ch`. More realistic extensions can include missingness, source mixtures, adversarial evidence, and model misspecification.
+Observation corruption alters the evidence channel rather than the posterior directly. In the binary baseline, observations are flipped with probability `q`. Earlier versions called this parameter `chaos`; that terminology is now retained only for backwards compatibility. The mature PCC Chaos construct requires unpredictability together with strategic adequacy and resistance to exploitation, so a flip probability is not sufficient. More realistic evidence-channel extensions can include missingness, source mixtures, adversarial evidence, and model misspecification.
 
 ## 3. Observables
 
@@ -61,11 +61,11 @@ Crucially, this is a *local geometric prediction*. It can fail outside the local
 
 ## 5. Meta-inference
 
-Let `phi = (P, C, Ch)` parameterize an update process. Given an observed belief trajectory `B`, the inverse problem is
+Let `phi = (P, C, q)` parameterize an update process, where `q` is observation corruption. Given an observed belief trajectory `B`, the inverse problem is
 
 `p(phi | B) ∝ p(B | phi) p(phi)`.
 
-The v0.1 baseline used simulation distance and normalized pseudo-posterior weights. Version 0.2 adds an explicit binary observation channel and a likelihood-based grid posterior. When received evidence is hidden, the binary observation is marginalized analytically at each transition. The model still remains synthetic and conditional on the specified update family; it is not a calibrated cognitive model.
+The v0.1 baseline used simulation distance and normalized pseudo-posterior weights. Version 0.2 adds an explicit binary observation channel and a likelihood-based grid posterior. Historical artifacts may call the corruption coordinate `chaos`; new work should use `observation_corruption`. When received evidence is hidden, the binary observation is marginalized analytically at each transition. The model still remains synthetic and conditional on the specified update family; it is not a calibrated cognitive model.
 
 A key v0.2 result is an identifiability ceiling near simplex boundaries: once beliefs saturate, additional belief observations can carry little information about the hidden corruption process. See `OBSERVATION_MODEL.md`.
 

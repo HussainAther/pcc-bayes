@@ -62,8 +62,8 @@ def infer_pressure_control_grid(observed_beliefs, observations, world,
     Conditional inverse inference for Pressure and Control when the realized
     observation sequence is known. Returns normalized simulation-match weights.
 
-    Chaos is intentionally absent: conditional on already-observed evidence,
-    corruption probability belongs to the data-channel model rather than the
+    Observation corruption is intentionally absent: conditional on already-observed
+    evidence, corruption probability belongs to the data-channel model rather than the
     deterministic belief replay.
     """
     rows = []

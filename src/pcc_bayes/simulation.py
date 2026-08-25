@@ -53,7 +53,7 @@ def simulate_binary_learning(
             world = BinaryWorld(world.p_h0, world.p_h1, 1 - world.true_hypothesis)
         truths.append(world.true_hypothesis)
         x = world.sample(rng)
-        y = corrupt_binary_observation(x, pcc.chaos, rng)
+        y = corrupt_binary_observation(x, pcc.observation_corruption, rng)
         likelihood = world.likelihood(y)
         belief = tempered_update(
             belief, likelihood, pressure=pcc.pressure, control=pcc.control

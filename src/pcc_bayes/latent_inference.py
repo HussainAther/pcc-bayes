@@ -59,7 +59,7 @@ def observed_channel_loglik(
     world,
     pressure: float,
     control: float,
-    chaos: float,
+    observation_corruption: float,
     *,
     raw_observations=None,
     true_hypotheses=None,
@@ -67,8 +67,8 @@ def observed_channel_loglik(
 ) -> float:
     """Log-likelihood when received observations are known.
 
-    If raw observations are supplied, Chaos is identified through P(Y|X, chaos).
-    Otherwise the raw channel is marginalized using the Bernoulli world model.
+    If raw observations are supplied, observation corruption is identified through
+    P(Y|X,q). Otherwise the raw channel is marginalized using the Bernoulli world model.
     Belief transitions contribute an independent logit-space measurement term.
     """
     beliefs = np.asarray(beliefs, dtype=float)
@@ -86,11 +86,11 @@ def observed_channel_loglik(
             beliefs[t], beliefs[t + 1], int(y), world, pressure, control, sigma_logit
         )
         if raw_observations is not None:
-            prob = binary_flip_probability(int(y), int(raw_observations[t]), chaos)
+            prob = binary_flip_probability(int(y), int(raw_observations[t]), observation_corruption)
         else:
             h = world.true_hypothesis if true_hypotheses is None else int(true_hypotheses[t])
             p_raw = float(world.probs[h])
-            prob = seen_probability(int(y), p_raw, chaos)
+            prob = seen_probability(int(y), p_raw, observation_corruption)
         total += math.log(max(prob, EPS))
     return float(total)
 
@@ -100,7 +100,7 @@ def latent_channel_loglik(
     world,
     pressure: float,
     control: float,
-    chaos: float,
+    observation_corruption: float,
     *,
     true_hypotheses=None,
     sigma_logit: float = 0.05,
@@ -109,7 +109,7 @@ def latent_channel_loglik(
 
     For every transition, Y_t in {0,1} is analytically marginalized:
 
-        p(b_{t+1}|b_t) = sum_y p(y|world, chaos) p(b_{t+1}|b_t,y,P,C).
+        p(b_{t+1}|b_t) = sum_y p(y|world,q) p(b_{t+1}|b_t,y,P,C).
 
     Conditioning each transition on the observed b_t makes this a scalable
     state-transition likelihood rather than an exponential enumeration of all
@@ -128,7 +128,7 @@ def latent_channel_loglik(
         p_raw = float(world.probs[h])
         terms = []
         for y in (0, 1):
-            py = seen_probability(y, p_raw, chaos)
+            py = seen_probability(y, p_raw, observation_corruption)
             ll_b = belief_transition_loglik(
                 beliefs[t], beliefs[t + 1], y, world, pressure, control, sigma_logit
             )
@@ -137,19 +137,19 @@ def latent_channel_loglik(
     return float(total)
 
 
-def infer_latent_pcc_grid(
+def infer_latent_update_grid(
     beliefs,
     world,
     pressure_grid,
     control_grid,
-    chaos_grid,
+    corruption_grid,
     *,
     observations=None,
     raw_observations=None,
     true_hypotheses=None,
     sigma_logit: float = 0.05,
 ):
-    """Discrete Bayesian inference over (Pressure, Control, Chaos).
+    """Discrete Bayesian inference over Bayes-domain update/noise parameters.
 
     Uniform priors over supplied grid points are assumed. If observations are
     omitted, the received evidence is analytically marginalized. If observations
@@ -158,7 +158,7 @@ def infer_latent_pcc_grid(
     rows = []
     for p in pressure_grid:
         for c in control_grid:
-            for ch in chaos_grid:
+            for ch in corruption_grid:
                 if observations is None:
                     ll = latent_channel_loglik(
                         beliefs, world, p, c, ch,
@@ -175,7 +175,8 @@ def infer_latent_pcc_grid(
                 rows.append({
                     "pressure": float(p),
                     "control": float(c),
-                    "chaos": float(ch),
+                    "observation_corruption": float(ch),
+                    "chaos": float(ch),  # legacy output alias
                     "log_likelihood": float(ll),
                 })
 
@@ -189,18 +190,48 @@ def infer_latent_pcc_grid(
     return rows
 
 
+def infer_latent_pcc_grid(
+    beliefs,
+    world,
+    pressure_grid,
+    control_grid,
+    chaos_grid,
+    **kwargs,
+):
+    """Backwards-compatible wrapper for v0.1-v0.3 experiments.
+
+    New code should call :func:`infer_latent_update_grid` with
+    ``corruption_grid=...``. The historical ``chaos_grid`` name is retained so
+    archived experiments remain reproducible.
+    """
+    return infer_latent_update_grid(
+        beliefs,
+        world,
+        pressure_grid,
+        control_grid,
+        corruption_grid=chaos_grid,
+        **kwargs,
+    )
+
+
 def posterior_summary(rows):
     """Posterior means, MAP point, entropy, and effective support for a grid posterior."""
     if not rows:
         raise ValueError("rows must not be empty")
     w = np.asarray([r["posterior"] for r in rows], dtype=float)
     w = w / w.sum()
-    means = {}
-    for key in ("pressure", "control", "chaos"):
-        means[key] = float(sum(float(r[key]) * wi for r, wi in zip(rows, w)))
+    keys = ("pressure", "control", "observation_corruption")
+    means = {
+        key: float(sum(float(r[key]) * wi for r, wi in zip(rows, w)))
+        for key in keys
+    }
+    # Compatibility alias for consumers of archived result schemas.
+    means["chaos"] = means["observation_corruption"]
     entropy = float(-np.sum(w * np.log(np.clip(w, EPS, None))))
+    map_values = {k: rows[0][k] for k in keys}
+    map_values["chaos"] = map_values["observation_corruption"]
     return {
-        "map": {k: rows[0][k] for k in ("pressure", "control", "chaos")},
+        "map": map_values,
         "mean": means,
         "posterior_entropy": entropy,
         "effective_grid_points": float(np.exp(entropy)),
@@ -209,9 +240,17 @@ def posterior_summary(rows):
 
 
 def posterior_marginal(rows, parameter: str):
-    """Collapse a grid posterior to a normalized marginal for one PCC parameter."""
-    if parameter not in ("pressure", "control", "chaos"):
-        raise ValueError("parameter must be pressure, control, or chaos")
+    """Collapse a grid posterior to a normalized marginal for one parameter.
+
+    ``chaos`` is accepted only as a backwards-compatible alias for
+    ``observation_corruption``.
+    """
+    if parameter == "chaos":
+        parameter = "observation_corruption"
+    if parameter not in ("pressure", "control", "observation_corruption"):
+        raise ValueError(
+            "parameter must be pressure, control, or observation_corruption"
+        )
     mass = {}
     for row in rows:
         value = float(row[parameter])

@@ -1,8 +1,8 @@
 # PCC-Bayes
 
-**Pressure–Chaos–Control and entropy-based instability dynamics for Bayesian belief trajectories.**
+**Bayesian belief dynamics within the broader Pressure–Chaos–Control / EBID research program.**
 
-PCC-Bayes extends the PCC / EBID research program from dynamical state variables to **belief distributions**. The central object is not only what an agent believes, but how its posterior distribution moves through probability space under evidence, inertia, and noise.
+PCC-Bayes extends the PCC / EBID research program from dynamical state variables to **belief distributions**. The central object is not only what an agent believes, but how its posterior distribution moves through probability space under evidence, inertia, and imperfect observations. The current scalar parameters are Bayes-domain proxies; they are not asserted to be complete operational definitions of the mature PCC constructs.
 
 ## Core question
 
@@ -12,17 +12,19 @@ Two agents may end at the same posterior while taking radically different routes
 
 ## PCC mapping in belief space
 
-| PCC term | Operational interpretation |
-|---|---|
-| Pressure | strength of incoming evidence / likelihood influence |
-| Control | persistence or concentration of the current belief |
-| Chaos | corruption, unreliability, or stochastic distortion of observations |
+The repository now distinguishes the **mature PCC constructs** from the scalar parameters used by this synthetic Bayesian model. See `docs/PCC_CONSTRUCT_MAPPING.md`.
+
+| Repository quantity | Operational interpretation | PCC status |
+|---|---|---|
+| Pressure parameter | strength of incoming evidence / likelihood influence | Pressure-like proxy |
+| Control parameter | persistence or concentration of the current belief | Control-like proxy |
+| Observation corruption | unreliability / stochastic distortion of observations | **not PCC Chaos** |
 
 A generalized update is used for controlled experiments:
 
 `posterior_i ∝ prior_i^control * likelihood_i^pressure`
 
-With `pressure=1`, `control=1`, and `chaos=0`, this reduces to ordinary finite-hypothesis Bayes.
+With `pressure=1`, `control=1`, and `observation_corruption=0`, this reduces to ordinary finite-hypothesis Bayes. Historical code may still pass `chaos=0` as a compatibility alias.
 
 ## EBID-style observables
 
@@ -56,7 +58,7 @@ pcc-bayes/
 │   ├── observation_channel.py # explicit evidence-corruption model
 │   ├── observables.py       # EBID-style trajectory observables
 │   ├── reporting.py         # noisy reports + binary action models
-│   ├── pcc.py               # PCC parameterization + noise operator
+│   ├── pcc.py               # Bayes-domain proxy parameters + compatibility alias
 │   ├── update_models.py     # Bayes/leaky/anchored/PCC candidates
 │   └── simulation.py        # sequential binary belief model
 ├── experiments/
@@ -121,10 +123,10 @@ Outputs are written to `results/`.
 
 ## Relationship to PCC / EBID
 
-The parent PCC / EBID project studies structured instability under Pressure, Chaos, and Control and uses entropy-like quantities as observables of dynamical departure. PCC-Bayes asks whether the same mathematical language is useful when the dynamical state is itself a probability distribution.
+The parent PCC / EBID project studies structured instability under Pressure, Chaos, and Control and uses entropy-like quantities as observables of dynamical departure. PCC-Bayes asks whether related dynamical ideas are useful when the state is itself a probability distribution. It does **not** equate evidence noise with PCC Chaos; the construct mapping is frozen separately in `docs/PCC_CONSTRUCT_MAPPING.md`.
 
 The connection is a hypothesis to test, not an assumed equivalence.
 
 ## Status
 
-Version 0.3 adds a latent-belief observation layer and likelihood-based model comparison among Bayes, leaky Bayes, anchored Bayes, and PCC-tempered updates. In the frozen synthetic baseline, noisy probability reports recover the PCC generator cleanly while binary actions alone leave substantial ambiguity with leaky Bayes. The v0.2 Chaos-saturation ceiling remains an important earlier boundary result. APIs and theory remain research-grade and are expected to evolve.
+Version 0.3 adds a latent-belief observation layer and likelihood-based model comparison among Bayes, leaky Bayes, anchored Bayes, and PCC-tempered updates. In the frozen synthetic baseline, noisy probability reports recover the PCC generator cleanly while binary actions alone leave substantial ambiguity with leaky Bayes. The v0.2 observation-corruption saturation ceiling remains an important earlier boundary result. APIs and theory remain research-grade and are expected to evolve.
