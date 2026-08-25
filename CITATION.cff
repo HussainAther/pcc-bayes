@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: PCC-Bayes
+message: "If you use this research software, please cite the repository and associated publication when available."
+type: software
+authors:
+  - family-names: Ather
+    given-names: Syed Hussain
+version: 0.1.0
+date-released: 2026-08-25
+license: MIT

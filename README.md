@@ -1,0 +1,115 @@
+# PCC-Bayes
+
+**Pressure–Chaos–Control and entropy-based instability dynamics for Bayesian belief trajectories.**
+
+PCC-Bayes extends the PCC / EBID research program from dynamical state variables to **belief distributions**. The central object is not only what an agent believes, but how its posterior distribution moves through probability space under evidence, inertia, and noise.
+
+## Core question
+
+> Can the structure of an inferential process be recovered from the dynamics of its beliefs, rather than only from its final belief state?
+
+Two agents may end at the same posterior while taking radically different routes: smooth convergence, oscillatory revision, dogmatic persistence, or noise-driven volatility. PCC-Bayes makes those trajectories measurable.
+
+## PCC mapping in belief space
+
+| PCC term | Operational interpretation |
+|---|---|
+| Pressure | strength of incoming evidence / likelihood influence |
+| Control | persistence or concentration of the current belief |
+| Chaos | corruption, unreliability, or stochastic distortion of observations |
+
+A generalized update is used for controlled experiments:
+
+`posterior_i ∝ prior_i^control * likelihood_i^pressure`
+
+With `pressure=1`, `control=1`, and `chaos=0`, this reduces to ordinary finite-hypothesis Bayes.
+
+## EBID-style observables
+
+The repo tracks:
+
+- Shannon entropy: current uncertainty
+- KL / Jensen-Shannon revision: belief change per observation
+- cumulative revision: total trajectory movement
+- KL to a reference belief: displacement in information space
+- belief reversals: changes in MAP hypothesis
+- time to confidence
+- rolling revision volatility
+
+Near a reference distribution, KL divergence is locally quadratic in belief perturbations. This gives a direct information-geometric bridge to the EBID observation that quadratic entropy-like deficits can grow at twice the local perturbation exponent.
+
+## What is deliberately *not* claimed
+
+This repository does **not** assume that human cognition is exactly Bayesian, that PCC is universal, or that the generalized update is a psychological law. The first goal is narrower: build a falsifiable computational framework for classifying and inferring belief dynamics.
+
+## Repository layout
+
+```text
+pcc-bayes/
+├── src/pcc_bayes/
+│   ├── bayes.py             # ordinary + tempered Bayesian updates
+│   ├── belief_state.py      # entropy / KL / JS utilities
+│   ├── geometry.py          # local Fisher/KL geometry
+│   ├── meta_inference.py    # inverse inference over update parameters
+│   ├── observables.py       # EBID-style trajectory observables
+│   ├── pcc.py               # PCC parameterization + noise operator
+│   └── simulation.py        # sequential binary belief model
+├── experiments/
+│   ├── 01_coin_learning.py
+│   ├── 02_regime_sweep.py
+│   ├── 03_world_switch.py
+│   ├── 04_same_endpoint_different_paths.py
+│   ├── 05_information_geometry.py
+│   └── 06_infer_update_rule.py
+├── docs/
+│   ├── THEORY.md
+│   ├── HYPOTHESES.md
+│   ├── FALSIFICATION_PLAN.md
+│   └── ROADMAP.md
+└── tests/
+```
+
+## Install
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
+```
+
+## Run tests
+
+```bash
+pytest -q
+```
+
+## Run experiments
+
+```bash
+python experiments/01_coin_learning.py
+python experiments/02_regime_sweep.py
+python experiments/03_world_switch.py
+python experiments/04_same_endpoint_different_paths.py
+python experiments/05_information_geometry.py
+python experiments/06_infer_update_rule.py
+```
+
+Outputs are written to `results/`.
+
+## First research targets
+
+1. **Belief-regime map** — identify where inference is prior-dominated, evidence-responsive, volatile, or noise-limited.
+2. **Plasticity vs rigidity** — after the latent world switches, measure adaptation delay as a function of control and pressure.
+3. **Path dependence** — construct trajectories with similar endpoints but different revision volatility.
+4. **Information geometry** — test the local quadratic KL approximation and the predicted doubled growth exponent in controlled perturbation experiments.
+5. **Meta-inference** — infer latent PCC update parameters from observed belief trajectories.
+
+## Relationship to PCC / EBID
+
+The parent PCC / EBID project studies structured instability under Pressure, Chaos, and Control and uses entropy-like quantities as observables of dynamical departure. PCC-Bayes asks whether the same mathematical language is useful when the dynamical state is itself a probability distribution.
+
+The connection is a hypothesis to test, not an assumed equivalence.
+
+## Status
+
+Early research code. APIs and theory are expected to evolve as experiments falsify, refine, or replace the initial PCC-to-belief mapping.
