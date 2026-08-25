@@ -54,3 +54,28 @@ def test_context_exploiter_learns_observation_action_mapping():
         })
     exploiter = ContextExploiter(observation_order=1, action_order=0).fit(episodes)
     assert exploiter.accuracy(episodes) == 1.0
+
+
+def test_threshold_chaos_probability_has_frozen_bounds():
+    from pcc_bayes.strategic_chaos import threshold_chaos_prob
+    assert threshold_chaos_prob(0.20) == 0.0
+    assert np.isclose(threshold_chaos_prob(0.50), 0.5)
+    assert threshold_chaos_prob(0.80) == 1.0
+
+
+def test_threshold_chaos_episode_is_reproducible():
+    config = TrackingConfig(steps=80)
+    a = simulate_policy_episode("threshold_chaos", config, seed=9)
+    b = simulate_policy_episode("threshold_chaos", config, seed=9)
+    assert np.array_equal(a["actions"], b["actions"])
+    assert 0.0 < a["policy_entropy"] < 1.0
+
+
+def test_adaptive_exploiter_updates_online():
+    from pcc_bayes.strategic_chaos import AdaptiveContextExploiter
+    observations = np.tile([0, 1], 30)
+    actions = observations.copy()
+    episode = {"observations": observations, "actions": actions, "action_probabilities": actions.astype(float)}
+    exploiter = AdaptiveContextExploiter(observation_order=1, action_order=0).fit([])
+    acc = exploiter.prequential_accuracy([episode])
+    assert acc > 0.9

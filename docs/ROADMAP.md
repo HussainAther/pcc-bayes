@@ -71,4 +71,11 @@ No human-domain interpretation should precede a clear observation model and appr
 - separated Chaos into unpredictability, adequacy, and exploitability resistance
 - retained a failed history-only exploitability gate
 - passed a prospectively frozen context-conditioned exploitation diagnostic
-- next: test whether the result survives a genuinely adversarial adaptive opponent and a second policy architecture, rather than only a frozen lookup exploiter
+
+## v0.5.0 completed: adaptive Chaos replication
+
+- added an online-updating context-aware exploiter
+- retained the original structured-Chaos policy unchanged
+- added an independently specified stochastic-threshold Chaos architecture
+- both candidates passed frozen unpredictability, adequacy, value-preservation, and adaptive-exploitability gates
+- next: vary exploiter model class and environmental payoff/asymmetry before claiming broader portability

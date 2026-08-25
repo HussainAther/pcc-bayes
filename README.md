@@ -5,9 +5,9 @@
 PCC-Bayes extends the PCC / EBID research program from dynamical state variables to **belief distributions**. The central object is not only what an agent believes, but how its posterior distribution moves through probability space under evidence, inertia, and imperfect observations. The current scalar parameters are Bayes-domain proxies; they are not asserted to be complete operational definitions of the mature PCC constructs.
 
 
-## Mature PCC Chaos probe (v0.4.1)
+## Mature PCC Chaos replication (v0.5.0)
 
-The repository now contains a prospectively frozen test of the mature PCC Chaos anti-definition: **unpredictability + strategic adequacy + resistance to exploitation**, rather than observation noise. In a switching-state Bayesian tracking task, structured value-aware mixing preserved most decision accuracy and became materially harder to exploit once public context was held fixed. The original history-only exploitability gate failed and remains recorded as a negative result. See `validation/V0_4_CHAOS_FREEZE.md`, `validation/V0_4_1_CONTEXT_EXPLOITER_FREEZE.md`, and `validation/V0_4_CHAOS_RESULT.md`.
+The repository now contains a prospectively frozen replication of the mature PCC Chaos anti-definition: **unpredictability + strategic adequacy + resistance to exploitation**, rather than observation noise. Two independently specified value-aware stochastic policies both preserved most decision accuracy and reduced the accuracy of a context-aware exploiter that updated online after every revealed action. The original v0.4 history-only exploitability failure remains preserved as a negative result; v0.5 strengthens only the narrower context-conditioned claim. See `validation/V0_5_ADAPTIVE_CHAOS_REPLICATION_FREEZE.md` and `validation/V0_5_ADAPTIVE_CHAOS_REPLICATION_RESULT.md`.
 
 ## Core question
 
@@ -65,6 +65,7 @@ pcc-bayes/
 │   ├── reporting.py         # noisy reports + binary action models
 │   ├── pcc.py               # Bayes-domain proxy parameters + compatibility alias
 │   ├── update_models.py     # Bayes/leaky/anchored/PCC candidates
+│   ├── strategic_chaos.py   # value-aware mixing + adaptive exploiters
 │   └── simulation.py        # sequential binary belief model
 ├── experiments/
 │   ├── 01_coin_learning.py

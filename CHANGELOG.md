@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 - Adaptive exploiter and independent Chaos replication
+
+- prospectively froze an online adaptive-exploiter replication before confirmatory evaluation
+- added `threshold_chaos`, an independently specified stochastic decision-threshold architecture
+- added an online context-aware exploiter that predicts then updates after every revealed action
+- retained the v0.4.1 structured-Chaos policy and all environment parameters unchanged
+- both Chaos candidates passed frozen unpredictability, adequacy, value-preservation, and adaptive-exploitability gates
+- structured Chaos reduced adaptive exploiter accuracy from 0.9835 to 0.9002
+- threshold Chaos reduced adaptive exploiter accuracy from 0.9835 to 0.9122
+- added Experiment 14, frozen result documentation, and regression tests
+
 ## 0.4.1 - Mature Chaos and context-conditioned exploitability
 
 - added a switching-state Bayesian tracking environment for strategic-policy tests

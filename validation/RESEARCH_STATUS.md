@@ -60,6 +60,13 @@ A separately frozen context-aware diagnostic then exposed the current/previous p
 
 The current supported interpretation is therefore conditional: Bayesian structured Chaos is not globally unpredictable, but value-aware mixing can reduce exploitability **given the same public context** while preserving most decision value. Uniform randomness remains maximally unpredictable but strategically inadequate, and observation corruption remains a noise baseline rather than PCC Chaos. See `validation/V0_4_CHAOS_RESULT.md`.
 
+
+## Adaptive-exploiter and independent-architecture replication (v0.5.0)
+
+A prospectively frozen replication tested the unchanged structured-Chaos policy and a second stochastic-threshold architecture against a context-aware exploiter that updates after every revealed action. Deterministic value play remained highly predictable to this opponent (0.9835 accuracy). Structured Chaos reduced adaptive prediction accuracy to 0.9002 while preserving task accuracy at 0.7856 versus 0.8059 for deterministic play. The independent threshold-Chaos policy reduced adaptive prediction accuracy to 0.9122 while retaining 0.7895 task accuracy.
+
+Both candidates passed all four frozen gates: increased policy entropy, adequacy relative to uniform random play, value preservation relative to deterministic play, and at least a 0.05 reduction in adaptive exploiter accuracy. On mixing opportunities, adaptive prediction accuracy was about 0.765 for both architectures. This supports implementation replication of the narrow context-conditioned Chaos claim within the current Bayesian tracking substrate. It does not yet establish robustness to different exploiter model classes or payoff structures. See `validation/V0_5_ADAPTIVE_CHAOS_REPLICATION_RESULT.md`.
+
 ## Not yet established
 
 - a universal PCC structure for Bayesian inference
@@ -70,7 +77,7 @@ The current supported interpretation is therefore conditional: Bayesian structur
 
 ## Next scientific milestone
 
-Quantify model-recovery calibration across repeated seeds and observation regimes, then make the evidence sequence latent at the same time as internal belief. The key next question is whether update model, corruption channel, and decision/report parameters remain jointly identifiable rather than only conditionally identifiable when received evidence is supplied.
+For the mature-Chaos branch, test robustness to a genuinely different exploiter model class and to asymmetric or state-dependent decision payoffs, without retuning the two passing policies. In parallel, the inference branch still has a frozen 100-seed model-recovery confirmation pending. The broader question is whether the current conditional-exploitability result survives changes to both the observer and the strategic value landscape.
 
 
 ## v0.3.1 repeated-seed recovery pilot

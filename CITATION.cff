@@ -5,6 +5,6 @@ type: software
 authors:
   - family-names: Ather
     given-names: Syed Hussain
-version: 0.3.2
+version: 0.5.0
 date-released: 2026-08-25
 license: MIT

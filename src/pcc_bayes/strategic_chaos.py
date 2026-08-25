@@ -90,6 +90,20 @@ def structured_chaos_prob(p1: float) -> float:
     return non_map
 
 
+def threshold_chaos_prob(p1: float, low: float = 0.25, high: float = 0.75) -> float:
+    """Marginal action probability for a uniformly sampled decision threshold.
+
+    A fresh threshold T ~ Uniform(low, high) is drawn and action 1 is selected
+    iff p1 >= T. This is an independent policy architecture from
+    ``structured_chaos_prob``: stochasticity enters through the criterion, not
+    through an explicit non-MAP mixing weight.
+    """
+    if not 0.0 <= low < high <= 1.0:
+        raise ValueError("threshold bounds must satisfy 0 <= low < high <= 1")
+    p1 = float(p1)
+    return float(np.clip((p1 - low) / (high - low), 0.0, 1.0))
+
+
 def simulate_policy_episode(policy: str, config: TrackingConfig, seed: int):
     states, observations = generate_tracking_episode(config, seed)
     clean_beliefs = filter_binary_markov(
@@ -111,6 +125,7 @@ def simulate_policy_episode(policy: str, config: TrackingConfig, seed: int):
         "uniform_random": 10_002,
         "corrupted_predictable": 10_003,
         "structured_chaos": 10_004,
+        "threshold_chaos": 10_005,
     }[policy])
 
     if policy == "predictable_value" or policy == "corrupted_predictable":
@@ -119,10 +134,18 @@ def simulate_policy_episode(policy: str, config: TrackingConfig, seed: int):
         probs = np.full(config.steps, 0.5, dtype=float)
     elif policy == "structured_chaos":
         probs = np.asarray([structured_chaos_prob(p) for p in beliefs], dtype=float)
+    elif policy == "threshold_chaos":
+        # Preserve the marginal probabilities for entropy accounting, while the
+        # realized action is generated below by an explicit sampled threshold.
+        probs = np.asarray([threshold_chaos_prob(p) for p in beliefs], dtype=float)
     else:
         raise ValueError(f"unknown policy: {policy}")
 
-    actions = (rng.random(config.steps) < probs).astype(int)
+    if policy == "threshold_chaos":
+        thresholds = rng.uniform(0.25, 0.75, size=config.steps)
+        actions = (beliefs >= thresholds).astype(int)
+    else:
+        actions = (rng.random(config.steps) < probs).astype(int)
     accuracy = float(np.mean(actions == states))
     entropy = float(np.mean([binary_entropy(p) for p in probs]))
     return {
@@ -277,4 +300,68 @@ def evaluate_context_exploitability(policy: str, config: TrackingConfig, calibra
             np.mean((ep["action_probabilities"] > 0.0) & (ep["action_probabilities"] < 1.0))
             for ep in evaluation
         ])),
+    }
+
+
+class AdaptiveContextExploiter(ContextExploiter):
+    """Context exploiter that updates after every revealed evaluation action."""
+
+    def update_at(self, observations, actions, t):
+        observations = np.asarray(observations, dtype=int)
+        actions = np.asarray(actions, dtype=int)
+        action = int(actions[t])
+        self._global[action] += 1.0
+        key = self._key(observations, actions, t)
+        if key is not None:
+            if key not in self._counts:
+                self._counts[key] = np.array([self.alpha, self.alpha], dtype=float)
+            self._counts[key][action] += 1.0
+
+    def prequential_accuracy(self, episodes, mask_fn=None) -> float:
+        """Predict then update online, retaining learned counts across episodes."""
+        correct = 0
+        total = 0
+        for episode in episodes:
+            observations = np.asarray(episode["observations"], dtype=int)
+            actions = np.asarray(episode["actions"], dtype=int)
+            for t in range(len(actions)):
+                key = self._key(observations, actions, t)
+                if key is None:
+                    continue
+                use = mask_fn is None or mask_fn(episode, t)
+                if use:
+                    pred = self.predict_at(observations, actions, t)
+                    correct += int(pred == actions[t])
+                    total += 1
+                self.update_at(observations, actions, t)
+        return float(correct / total) if total else float("nan")
+
+
+def evaluate_adaptive_exploitability(policy: str, config: TrackingConfig, calibration_seeds, evaluation_seeds):
+    calibration = [simulate_policy_episode(policy, config, int(seed)) for seed in calibration_seeds]
+    evaluation = [simulate_policy_episode(policy, config, int(seed)) for seed in evaluation_seeds]
+    exploiter = AdaptiveContextExploiter(observation_order=2, action_order=2, alpha=1.0).fit(calibration)
+
+    def mixing_opportunity(episode, t):
+        p = float(episode["action_probabilities"][t])
+        return 0.0 < p < 1.0
+
+    adaptive_accuracy = exploiter.prequential_accuracy(evaluation)
+
+    # Use a fresh copy so the subset diagnostic sees the same frozen initial
+    # condition rather than a twice-adapted exploiter.
+    subset_exploiter = AdaptiveContextExploiter(observation_order=2, action_order=2, alpha=1.0).fit(calibration)
+    mixing_accuracy = subset_exploiter.prequential_accuracy(evaluation, mask_fn=mixing_opportunity)
+
+    return {
+        "policy": policy,
+        "mean_accuracy": float(np.mean([x["accuracy"] for x in evaluation])),
+        "mean_policy_entropy": float(np.mean([x["policy_entropy"] for x in evaluation])),
+        "adaptive_exploiter_accuracy": adaptive_accuracy,
+        "mixing_opportunity_adaptive_accuracy": mixing_accuracy,
+        "mixing_opportunity_fraction": float(np.mean([
+            np.mean((ep["action_probabilities"] > 0.0) & (ep["action_probabilities"] < 1.0))
+            for ep in evaluation
+        ])),
+        "episodes": len(evaluation),
     }
